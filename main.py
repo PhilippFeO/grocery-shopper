@@ -6,8 +6,9 @@ from build_ingredients import build_ingredients
 from handle_ing_miss_url import handle_ing_miss_cu
 from archive_contents import archive_contents
 import logging
+import defaults
 
-firefox_profile_path = os.path.expanduser('~/.mozilla/firefox/5mud7ety.Rewe')
+firefox_profile_path = os.path.expanduser(defaults.firefox_profile_path)
 
 
 logging.basicConfig(level=logging.INFO,
@@ -15,15 +16,19 @@ logging.basicConfig(level=logging.INFO,
                     datefmt=' %H:%M:%S')
 
 
-def main():
+def main(recipes: list[str] = None):
     """
     This function is called via `python3 main.py recipe-1.yaml ...`. Hence, reading and checking `sys.argv`.
     """
-    sys.argv = ['main.py', 'recipes/Testgericht.yaml']
-    num_recipes = len(sys.argv)
+    # sys.argv = ['main.py', 'recipes/Testgericht.yaml']
+    if recipes is None:
+        recipes = sys.argv[1:]
+        num_recipes = len(recipes)
+    else:
+        num_recipes = len(recipes)
 
     # Check if at least one file is provided
-    if num_recipes <= 1:
+    if num_recipes < 1:
         print(
             f"Usage: python {os.path.basename(__file__)} recipe_1.yaml ...")
         sys.exit(1)
@@ -51,7 +56,7 @@ def main():
     # Iterate through command-line arguments starting from the second argument
     # TODO: As exercise: parallelize reading/parsing the recipe.yaml <05-01-2024>
     shopping_list_str.append(f'{header}')
-    for recipe_file in sys.argv[1:]:
+    for recipe_file in recipes:
         all_ingredients.extend(collect_ingredients_helper(recipe_file))
     shopping_list_str.append('\n'.join((f"{ingredient}" for ingredient in all_ingredients)) +
                              '\n' * 3)
@@ -121,7 +126,7 @@ def main():
     print(f'{header}', *final_ingredients, sep='\n', end='\n')
 
     # Archive shopping list and recipes
-    archive_contents(shopping_list_file, sys.argv[1:])
+    archive_contents(shopping_list_file, recipes)
 
     # Copy shopping_list_file to dir 'selection'
     # hard link recipes
