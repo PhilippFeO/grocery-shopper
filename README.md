@@ -1,4 +1,4 @@
-# Recipe Selector #
+# Grocery Shopper
 No "What should I eat for dinner today?" and manually buying ever again! Recipes are selected randomly and a firefox instance will open to buy the necessary ingredients online[^1] – Deciding and grocery shopping in one step!
 
 ## Installation
