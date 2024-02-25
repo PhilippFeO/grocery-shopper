@@ -29,8 +29,7 @@ def start():
     p = argparse.ArgumentParser(__file__)
     p.add_argument('num_recipes',
                    help='Number of recipes',
-                   type=int,
-                   required=True)
+                   type=int)
     arg_dir = 'dir'
     p.add_argument(f'--{arg_dir}',
                    help='Top level directory. Here will all files and directories be saved.',
