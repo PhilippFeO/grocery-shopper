@@ -8,6 +8,7 @@ from build_ingredients import build_ingredients
 from handle_ing_miss_url import handle_ing_miss_cu
 from archive_contents import archive_contents
 from select_recipes import select_recipes
+from pathlib import Path
 import logging
 
 
@@ -72,7 +73,7 @@ def main(num_recipes: int = 1,
     # To many if-statements affect readability, hence two for loops and helpfer function.
     yaml_files = glob.glob(os.path.join(misc_dir, '*.yaml'))
     for file in yaml_files:
-        file_stem = file.split('.')[0]
+        file_stem = Path(file).stem
         misc_ingredients = collect_ingredients_helper(file)
         all_ingredients.extend(misc_ingredients)
         shopping_list_str.append(f'{file_stem}:\n' +
