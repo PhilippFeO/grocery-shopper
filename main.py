@@ -81,7 +81,7 @@ def main(num_recipes: int = 1,
                                  '\n'.join((f"{ingredient}" for ingredient in misc_ingredients)) +
                                  '\n' * 3)
 
-    # Write shopping list
+    # Write the shopping list
     shopping_list_file = 'shopping_list.txt'
     with open(shopping_list_file, 'w') as slf:
         for partial_shopping_list in shopping_list_str:
@@ -127,11 +127,6 @@ def main(num_recipes: int = 1,
     print(f'{header}', *final_ingredients, sep='\n', end='\n')
 
     # Archive shopping list and recipes
-    archive_contents(shopping_list_file, recipes)
-
-    # Copy shopping_list_file to dir 'selection'
-    # hard link recipes
-    # TODO: Hard link PDFs <31-01-2024>
 
     urls = handle_ing_miss_cu(all_ings_missing_cu,
                               final_ingredients,
