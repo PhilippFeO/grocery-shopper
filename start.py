@@ -1,4 +1,5 @@
 import argparse
+import main
 import configparser
 
 
@@ -25,6 +26,10 @@ def start():
     except FileNotFoundError:
         config['General'] = {}
     p = argparse.ArgumentParser(__file__)
+    p.add_argument('num_recipes',
+                   help='Number of recipes',
+                   type=int,
+                   required=True)
     arg_dir = 'dir'
     p.add_argument(f'--{arg_dir}',
                    help='Top level directory. Here will all files and directories be saved.',
@@ -35,11 +40,17 @@ def start():
                    type=str)
     # TODO: Option for creating pdfs <25-02-2024, Philipp Rost>
     args = p.parse_args()
+
     dir, firefox_profile = args.dir, args.firefox_profile
     helper(arg_dir, dir, config, 'No default recipe directory set. Please use\n\t--dir DIRECTORY\nif it\'s your first run.')
     helper(arg_firefox_profile, firefox_profile, config, 'No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
+
+    # Write default values
     with open(config_file, 'w') as f:
         config.write(f)
+
+    # Abfahrt
+    main.main(args.num_recipes)
 
 
 if __name__ == "__main__":

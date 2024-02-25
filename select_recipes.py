@@ -1,43 +1,36 @@
 import os
 import sys
 import random
-import main
 import defaults
 
-# Specify the number of files to choose via command line
-# N = int(sys.argv[1])
-num_req_recipes = 1
+# TODO: logging verwenden <25-02-2024>
 
-# Check if the directory exists
-if os.path.isdir(defaults.recipe_dir):
+
+def select_recipes(num_recipes) -> list[str]:
+    """Randomly selects submitted number of recipes.
+
+    :param int num_recipes: Number of recipes
+    """
+    # Check if the directory exists
+    if not os.path.isdir(defaults.recipe_dir):
+        print(f"Error: Directory '{defaults.recipe_dir}' not found.")
+        sys.exit(1)
+
     # Check if there are files in the directory
     num_files = len(os.listdir(defaults.recipe_dir))
     if num_files == 0:
-        print(f"Error: No files found in the directory '{defaults.recipe_dir}'.")
+        print(f"No files found in the directory '{defaults.recipe_dir}'.")
+        sys.exit(1)
+
+    if 1 > num_recipes > num_files:
+        print(f"<num_recipes> must be within 1 and {num_files}.")
         sys.exit(1)
 
     # Get a list of files in the directory
     files = [os.path.join(defaults.recipe_dir, f) for f in os.listdir(defaults.recipe_dir)]
 
-    # Check the command-line argument
-    # if len(sys.argv) != 2 or 0 > num_req_recipes > num_files:
-    #     print(f"Usage: {sys.argv[0]} N")
-    #     print(f"\twhere 0 < N <= {num_files} (Number of Recipes)")
-    #     sys.exit(1)
-
-    # Check if N is greater than the number of files
-    if num_req_recipes > num_files:
-        print(f"Error: {num_req_recipes} is greater than the number of files in the directory ({num_files}).")
-        sys.exit(1)
-
     # Generate an array of random indices within the range of the number of files
-    indices = random.sample(range(num_files), num_req_recipes)
+    indices = random.sample(range(num_files), num_recipes)
 
     # Loop through the randomly chosen indices and get the corresponding files
-    selected_recipes = [files[index] for index in indices]
-
-    # Go on
-    main.main(selected_recipes)
-else:
-    print(f"Error: Directory '{defaults.recipe_dir}' not found.")
-    sys.exit(1)
+    return [files[index] for index in indices]

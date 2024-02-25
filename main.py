@@ -5,10 +5,8 @@ from ingredient import Ingredient
 from build_ingredients import build_ingredients
 from handle_ing_miss_url import handle_ing_miss_cu
 from archive_contents import archive_contents
+from select_recipes import select_recipes
 import logging
-import defaults
-
-firefox_profile_path = os.path.expanduser(defaults.firefox_profile_path)
 
 
 logging.basicConfig(level=logging.INFO,
@@ -16,22 +14,12 @@ logging.basicConfig(level=logging.INFO,
                     datefmt=' %H:%M:%S')
 
 
-def main(recipes: list[str] = None):
-    """
-    This function is called via `python3 main.py recipe-1.yaml ...`. Hence, reading and checking `sys.argv`.
-    """
-    # sys.argv = ['main.py', 'recipes/Testgericht.yaml']
-    if recipes is None:
-        recipes = sys.argv[1:]
-        num_recipes = len(recipes)
+def main(num_recipes: int = 1,
+         recipe_files: list[str] = None):
+    if recipe_files:
+        recipes = recipe_files
     else:
-        num_recipes = len(recipes)
-
-    # Check if at least one file is provided
-    if num_recipes < 1:
-        print(
-            f"Usage: python {os.path.basename(__file__)} recipe_1.yaml ...")
-        sys.exit(1)
+        recipes = select_recipes(num_recipes)
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
@@ -138,7 +126,7 @@ def main(recipes: list[str] = None):
 
     # Open firefox with specific profile
     # subpress warnings
-    firefox = f"firefox --profile {firefox_profile_path}"
+    firefox = f"firefox --profile {firefox_profile}"
     # subprocess.run([editor, shopping_list_file])
     subprocess.run([*firefox.split(' '), *urls], stderr=subprocess.DEVNULL)
 
