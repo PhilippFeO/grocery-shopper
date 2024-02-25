@@ -9,11 +9,10 @@ hooks/
 2024/
 Rezepte.md
 out/
-tex/title.tex
-tex/ingredients.tex
-tex/preparation.tex
-tex/recipe-template.pdf
 out/
 # Ignore files, directories and links
 *pdf*
 defaults.ini
+recipes/
+res/
+misc/
