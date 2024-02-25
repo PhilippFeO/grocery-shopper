@@ -15,7 +15,7 @@ def helper(arg_name, arg_value, config, own_err_msg):
         except (configparser.NoSectionError, configparser.NoOptionError):
             print(own_err_msg)
     else:
-        config['General'][arg_name] = value
+        config['General'][arg_name] = os.path.expanduser(value)
 
 
 def start():
