@@ -9,12 +9,6 @@ from handle_ing_miss_url import handle_ing_miss_cu
 from archive_contents import archive_contents
 from select_recipes import select_recipes
 from pathlib import Path
-import logging
-
-
-logging.basicConfig(level=logging.INFO,
-                    format='[%(levelname)s: %(asctime)s] %(message)s',
-                    datefmt=' %H:%M:%S')
 
 
 def main(num_recipes: int = 1,

@@ -2,6 +2,12 @@ import argparse
 import os
 import main
 import configparser
+import logging
+
+
+logging.basicConfig(level=logging.INFO,
+                    format='[%(levelname)s: %(asctime)s] %(message)s',
+                    datefmt=' %H:%M:%S')
 
 
 def helper(arg_name, arg_value, config, own_err_msg):
@@ -13,7 +19,7 @@ def helper(arg_name, arg_value, config, own_err_msg):
         try:
             value = config['General'][arg_name]
         except (configparser.NoSectionError, configparser.NoOptionError):
-            print(own_err_msg)
+            logging.error(own_err_msg)
     else:
         config['General'][arg_name] = os.path.expanduser(value)
     return value

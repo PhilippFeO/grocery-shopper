@@ -2,8 +2,7 @@ import os
 import glob
 import sys
 import random
-
-# TODO: logging verwenden <25-02-2024>
+import logging
 
 
 def select_recipes(num_recipes, recipe_dir) -> list[str]:
@@ -13,22 +12,19 @@ def select_recipes(num_recipes, recipe_dir) -> list[str]:
     """
     # Check if the directory exists
     if not os.path.isdir(recipe_dir):
-        print(f"Error: Directory '{recipe_dir}' not found.")
+        logging.error(f"Directory '{recipe_dir}' not found.")
         sys.exit(1)
 
     # Check if there are files in the directory
     yaml_files = glob.glob(os.path.join(recipe_dir, '*.yaml'))
     num_files = len(yaml_files)
     if num_files == 0:
-        print(f"No files found in the directory '{recipe_dir}'.")
+        logging.error(f"No yaml-files found in the directory '{recipe_dir}'.")
         sys.exit(1)
 
     if num_recipes < 1 or num_files < num_recipes:
-        print(f"<num_recipes> must be within 1 and {num_files}.")
+        logging.error(f"<num_recipes> must be within 1 and {num_files}, but was {num_recipes}.")
         sys.exit(1)
-
-    # # Get a list of files in the directory
-    # files = [os.path.join(recipe_dir, f) for f in os.listdir(recipe_dir)]
 
     # Generate an array of random indices within the range of the number of files
     indices = random.sample(range(num_files), num_recipes)
