@@ -1,46 +1,46 @@
 import argparse
-import sys
-import defaults
 import configparser
 
 
-def start():
-    config = configparser.ConfigParser()
-    config.read('defaults.ini')
-    p = argparse.ArgumentParser(__file__)
-    p.add_argument("--recipe_dir2",
-                   nargs=1,
-                   help="Directory containing the recipes as yaml files",
-                   type=str,
-                   required=False)
-    args = p.parse_args()
-    recipe_dir = args.recipe_dir2
-    if recipe_dir is None:
+def helper(arg_name, arg_value, config, own_err_msg):
+    """
+    Retrieve default values from config file or user input and write it to config file in the latter case.
+    """
+    value = arg_value
+    if value is None:
         try:
-            recipe_dir = config.get('General', 'recipe_dir2')
+            value = config['General'][arg_name]
         except (configparser.NoSectionError, configparser.NoOptionError):
-            print('No default recipe directory set. Please use\n\t--recipe_dir RECIPE_DIR')
+            print(own_err_msg)
     else:
-        config.set('General', 'recipe_dir2', recipe_dir)
+        config['General'][arg_name] = value
 
-    # p.add_argument("--firefox_profile_path",
-    #                nargs=1,
-    #                help="Directory containing the recipes as yaml files",
-    #                type=str,
-    #                required=False)
+
+def start():
+    config_file = 'defaults.ini'
+    config = configparser.ConfigParser()
+    try:
+        # According to Doc: Use read_file() when file is expected to assist
+        config.read_file(open(config_file))
+    except FileNotFoundError:
+        config['General'] = {}
+    p = argparse.ArgumentParser(__file__)
+    arg_dir = 'dir'
+    p.add_argument(f'--{arg_dir}',
+                   help='Top level directory. Here will all files and directories be saved.',
+                   type=str)
+    arg_firefox_profile = 'firefox_profile'
+    p.add_argument(f'--{arg_firefox_profile}',
+                   help='Path to the firefox profile.',
+                   type=str)
+    # TODO: Option for creating pdfs <25-02-2024, Philipp Rost>
     args = p.parse_args()
+    dir, firefox_profile = args.dir, args.firefox_profile
+    helper(arg_dir, dir, config, 'No default recipe directory set. Please use\n\t--dir DIRECTORY\nif it\'s your first run.')
+    helper(arg_firefox_profile, firefox_profile, config, 'No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
+    with open(config_file, 'w') as f:
+        config.write(f)
 
 
 if __name__ == "__main__":
     start()
-
-"""
-import configparser
-
-config = configparser.ConfigParser()
-config.read('config.ini')
-
-# Accessing values
-recipes_directory = config.get('General', 'recipes_directory')
-default_value = config.getint('General', 'default_value')
-"""

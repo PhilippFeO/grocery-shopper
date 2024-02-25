@@ -16,3 +16,4 @@ tex/recipe-template.pdf
 out/
 # Ignore files, directories and links
 *pdf*
+defaults.ini
