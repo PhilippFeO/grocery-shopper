@@ -50,8 +50,10 @@ def start():
     with open(config_file, 'w') as f:
         config.write(f)
 
+    # Create necessary directories
     os.makedirs(f'{dir}/recipes', exist_ok=True)
     os.makedirs(f'{dir}/res', exist_ok=True)
+    os.makedirs(f'{dir}/misc', exist_ok=True)
 
     # Abfahrt
     main.main(args.num_recipes)
