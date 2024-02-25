@@ -21,6 +21,7 @@ def select_recipes(num_recipes, recipe_dir) -> list[str]:
         print(f"No files found in the directory '{recipe_dir}'.")
         sys.exit(1)
 
+    if num_recipes < 1 or num_files < num_recipes:
         print(f"<num_recipes> must be within 1 and {num_files}.")
         sys.exit(1)
 
