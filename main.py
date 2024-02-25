@@ -64,19 +64,16 @@ def main(num_recipes: int = 1,
     shopping_list_str.append('\n'.join((f"{ingredient}" for ingredient in all_ingredients)) +
                              '\n' * 3)
 
-    dir = 'misc'
-    directory = os.fsencode(dir)
-    # I want to add a destinct heading for each file in dir misc.
+    misc_dir = 'misc'
+    # I want to add a destinct heading for each file in misc_dir misc.
     # Iterating over `sys.argv[1:] + misc_files` would only be possibe with various if-statements
     # because the CLI provided files don't get a "filename" heading like `misc_files` do.
     # To many if-statements affect readability, hence two for loops and helpfer function.
-    for file in os.listdir(directory):
-        # TODO: Name nicht aus Dateiname ableiten, sonder 'recipe.name' in der Datei selbst <11-02-2024>
-        filename = os.fsdecode(file)
-        if '.gitignore' in filename:
+    for file in os.listmisc_dir(dir):
+        if '.gitignore' in file:
             continue
-        file_stem = filename.split('.')[0]
-        misc_ingredients = collect_ingredients_helper(f'{dir}/{filename}')
+        file_stem = file.split('.')[0]
+        misc_ingredients = collect_ingredients_helper(f'{misc_dir}/{file}')
         all_ingredients.extend(misc_ingredients)
         shopping_list_str.append(f'{file_stem}:\n' +
                                  f'{header}' +
