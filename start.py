@@ -16,6 +16,7 @@ def helper(arg_name, arg_value, config, own_err_msg):
             print(own_err_msg)
     else:
         config['General'][arg_name] = os.path.expanduser(value)
+    return value
 
 
 def start():
