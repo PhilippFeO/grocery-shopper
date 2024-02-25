@@ -21,11 +21,6 @@ def main(num_recipes: int = 1,
     """
     Conducts shopping process. Either callable with number of recipes to randomly select some or with list of recipes.
     """
-    if recipe_files:
-        recipes = recipe_files
-    else:
-        recipes = select_recipes(num_recipes)
-
     config_file = 'defaults.ini'
     config = configparser.ConfigParser()
     try:
@@ -36,6 +31,12 @@ def main(num_recipes: int = 1,
         sys.exit(1)
     firefox_profile = config['General']['firefox_profile']
     dir = config['General']['dir']
+    recipe_dir = f'{dir}/recipes'
+
+    if recipe_files:
+        recipes = recipe_files
+    else:
+        recipes = select_recipes(num_recipes, recipe_dir)
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
@@ -57,7 +58,6 @@ def main(num_recipes: int = 1,
         return sorted(valid_ingredients + ings_missing_cu,
                       key=lambda ingredient: ingredient.name)
 
-    # Iterate through command-line arguments starting from the second argument
     # TODO: As exercise: parallelize reading/parsing the recipe.yaml <05-01-2024>
     shopping_list_str.append(f'{header}')
     for recipe_file in recipes:
