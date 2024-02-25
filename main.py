@@ -1,4 +1,5 @@
 import sys
+import configparser
 import os
 import subprocess
 from ingredient import Ingredient
@@ -16,10 +17,24 @@ logging.basicConfig(level=logging.INFO,
 
 def main(num_recipes: int = 1,
          recipe_files: list[str] = None):
+    """
+    Conducts shopping process. Either callable with number of recipes to randomly select some or with list of recipes.
+    """
     if recipe_files:
         recipes = recipe_files
     else:
         recipes = select_recipes(num_recipes)
+
+    config_file = 'defaults.ini'
+    config = configparser.ConfigParser()
+    try:
+        # According to Doc: Use read_file() when file is expected to assist
+        config.read_file(open(config_file))
+    except FileNotFoundError as fnfe:
+        logging.error(f'{fnfe}\nMaybe you have to run <start.py> first to initialize default arguments.')
+        sys.exit(1)
+    firefox_profile = config['General']['firefox_profile']
+    dir = config['General']['dir']
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
