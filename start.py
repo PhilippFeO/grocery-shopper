@@ -74,6 +74,7 @@ def start():
     # Abfahrt
     if args.num_recipes:
         main.main(args.num_recipes)
+        print('\n\nEnjoy your meals and safed time! :)')
     if args.pdf:
         yaml2pdf.yaml2pdf(args.pdf, recipe_dir, res_dir)
 
