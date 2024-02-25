@@ -17,6 +17,8 @@ def select_recipes(num_recipes, recipe_dir) -> list[str]:
         sys.exit(1)
 
     # Check if there are files in the directory
+    yaml_files = glob.glob(os.path.join(recipe_dir, '*.yaml'))
+    num_files = len(yaml_files)
     if num_files == 0:
         print(f"No files found in the directory '{recipe_dir}'.")
         sys.exit(1)
@@ -32,3 +34,4 @@ def select_recipes(num_recipes, recipe_dir) -> list[str]:
     indices = random.sample(range(num_files), num_recipes)
 
     # Loop through the randomly chosen indices and get the corresponding files
+    return [yaml_files[index] for index in indices]

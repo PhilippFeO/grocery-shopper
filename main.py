@@ -1,4 +1,5 @@
 import sys
+import glob
 import configparser
 import os
 import subprocess
@@ -64,23 +65,22 @@ def main(num_recipes: int = 1,
     shopping_list_str.append('\n'.join((f"{ingredient}" for ingredient in all_ingredients)) +
                              '\n' * 3)
 
-    misc_dir = 'misc'
+    misc_dir = f'{dir}/misc'
     # I want to add a destinct heading for each file in misc_dir misc.
     # Iterating over `sys.argv[1:] + misc_files` would only be possibe with various if-statements
     # because the CLI provided files don't get a "filename" heading like `misc_files` do.
     # To many if-statements affect readability, hence two for loops and helpfer function.
-    for file in os.listmisc_dir(dir):
-        if '.gitignore' in file:
-            continue
+    yaml_files = glob.glob(os.path.join(misc_dir, '*.yaml'))
+    for file in yaml_files:
         file_stem = file.split('.')[0]
-        misc_ingredients = collect_ingredients_helper(f'{misc_dir}/{file}')
+        misc_ingredients = collect_ingredients_helper(file)
         all_ingredients.extend(misc_ingredients)
         shopping_list_str.append(f'{file_stem}:\n' +
                                  f'{header}' +
                                  '\n'.join((f"{ingredient}" for ingredient in misc_ingredients)) +
                                  '\n' * 3)
 
-    # Write the shopping list
+    # Write shopping list
     shopping_list_file = 'shopping_list.txt'
     with open(shopping_list_file, 'w') as slf:
         for partial_shopping_list in shopping_list_str:
