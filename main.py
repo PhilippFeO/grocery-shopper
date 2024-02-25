@@ -3,6 +3,7 @@ import glob
 import configparser
 import os
 import subprocess
+import logging
 from ingredient import Ingredient
 from build_ingredients import build_ingredients
 from handle_ing_miss_url import handle_ing_miss_cu

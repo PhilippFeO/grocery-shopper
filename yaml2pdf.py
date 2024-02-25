@@ -1,5 +1,6 @@
 import yaml
-import argparse
+import shutil
+import os
 import subprocess
 import logging
 from math import ceil
@@ -68,16 +69,8 @@ def read_recipe(file_path):
     return Recipe(recipe_data['recipe'][0]['name'], recipe_data['ingredients'], recipe_data['preparation'])
 
 
-if __name__ == '__main__':
-    p = argparse.ArgumentParser(__name__)
-    p.add_argument("recipe_yaml",
-                   help="One or more yaml files containing a recipe.",
-                   type=str,
-                   nargs='*',
-                   default=["recipes/Testgericht.yaml"])
-    args = p.parse_args()
-
-    for recipe_file in args.recipe_yaml:
+def yaml2pdf(recipe_yamls: list[str], recipe_dir: str, res_dir: str):
+    for recipe_file in recipe_yamls:
         recipe: Recipe = read_recipe(recipe_file)
         recipe.to_latex()
         # Compile recipe before moving to next
@@ -88,6 +81,8 @@ if __name__ == '__main__':
         if cp.returncode != 0:
             logging.error(f'Compilation of "{recipe_file}" failed.')
         else:
+            pdf_dir = f'{recipe_dir}/pdf'
+            if not os.path.isdir(pdf_dir):
+                os.makedirs(pdf_dir, exist_ok=True)
             basename = Path(recipe_file).stem
-            subprocess.run(['mkdir', '-p', 'recipes/pdf/'])
-            subprocess.run(['mv', 'res/out/template.pdf', f'recipes/pdf/{basename}.pdf'])
+            shutil.move(f'{res_dir}/out/template.pdf', f'{pdf_dir}/{basename}.pdf')

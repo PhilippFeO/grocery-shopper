@@ -3,6 +3,7 @@ import os
 import main
 import configparser
 import logging
+import yaml2pdf
 
 
 logging.basicConfig(level=logging.INFO,
@@ -34,7 +35,7 @@ def start():
     except FileNotFoundError:
         config['General'] = {}
     p = argparse.ArgumentParser(__file__)
-    p.add_argument('num_recipes',
+    p.add_argument('-n', '--num_recipes',
                    help='Number of recipes',
                    type=int)
     arg_dir = 'dir'
@@ -45,7 +46,11 @@ def start():
     p.add_argument(f'--{arg_firefox_profile}',
                    help='Path to the firefox profile.',
                    type=str)
-    # TODO: Option for creating pdfs <25-02-2024, Philipp Rost>
+    p.add_argument('--pdf',
+                   metavar='YAML',
+                   help='Generate pdfs from yaml files using LaTeX.',
+                   nargs='+',
+                   type=str)
     args = p.parse_args()
 
     dir, firefox_profile = args.dir, args.firefox_profile
@@ -58,12 +63,19 @@ def start():
         config.write(f)
 
     # Create necessary directories
-    os.makedirs(f'{dir}/recipes', exist_ok=True)
-    os.makedirs(f'{dir}/res', exist_ok=True)
-    os.makedirs(f'{dir}/misc', exist_ok=True)
+    # TODO: Pass directories to main? <25-02-2024>
+    recipe_dir = f'{dir}/recipes'
+    res_dir = f'{dir}/res'
+    misc_dir = f'{dir}/misc'
+    os.makedirs(recipe_dir, exist_ok=True)
+    os.makedirs(res_dir, exist_ok=True)
+    os.makedirs(misc_dir, exist_ok=True)
 
     # Abfahrt
-    main.main(args.num_recipes)
+    if args.num_recipes:
+        main.main(args.num_recipes)
+    if args.pdf:
+        yaml2pdf.yaml2pdf(args.pdf, recipe_dir, res_dir)
 
 
 if __name__ == "__main__":
