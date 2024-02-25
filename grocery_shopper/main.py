@@ -4,12 +4,13 @@ import configparser
 import os
 import subprocess
 import logging
-from ingredient import Ingredient
-from build_ingredients import build_ingredients
-from handle_ing_miss_url import handle_ing_miss_cu
-from archive_contents import archive_contents
-from select_recipes import select_recipes
 from pathlib import Path
+from grocery_shopper.ingredient import Ingredient
+from grocery_shopper.build_ingredients import build_ingredients
+from grocery_shopper.handle_ing_miss_url import handle_ing_miss_cu
+from grocery_shopper.archive_contents import archive_contents
+from grocery_shopper.select_recipes import select_recipes
+from grocery_shopper.vars import defaults_file
 
 
 def main(num_recipes: int = 1,
@@ -17,11 +18,11 @@ def main(num_recipes: int = 1,
     """
     Conducts shopping process. Either callable with number of recipes to randomly select some or with list of recipes.
     """
-    config_file = 'defaults.ini'
+    # Slightly different treatment because it shall be possible to execute main() directly with a list of files. In this case config_file must exist.
     config = configparser.ConfigParser()
     try:
         # According to Doc: Use read_file() when file is expected to assist
-        config.read_file(open(config_file))
+        config.read_file(open(defaults_file))
     except FileNotFoundError as fnfe:
         logging.error(f'{fnfe}\nMaybe you have to run <start.py> first to initialize default arguments.')
         sys.exit(1)

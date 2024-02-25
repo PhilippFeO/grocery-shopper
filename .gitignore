@@ -16,3 +16,5 @@ defaults.ini
 recipes/
 res/
 misc/
+build/
+grocery_shopper.egg-info/

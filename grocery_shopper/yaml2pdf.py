@@ -5,8 +5,8 @@ import subprocess
 import logging
 from math import ceil
 from pathlib import Path
-from ingredient import Ingredient
 from itertools import zip_longest
+from grocery_shopper.ingredient import Ingredient
 
 
 class Recipe:
@@ -74,7 +74,7 @@ def yaml2pdf(recipe_yamls: list[str], recipe_dir: str, res_dir: str):
         recipe: Recipe = read_recipe(recipe_file)
         recipe.to_latex()
         # Compile recipe before moving to next
-        cp: subprocess.CompletedProcess = subprocess.run(['./compile_recipe.sh', 'template.tex'],
+        cp: subprocess.CompletedProcess = subprocess.run(['grocery_shopper/compile_recipe.sh', 'grocery_shopper/template.tex'],
                                                          # stdout=subprocess.DEVNULL,
                                                          # stderr=subprocess.DEVNULL
                                                          )

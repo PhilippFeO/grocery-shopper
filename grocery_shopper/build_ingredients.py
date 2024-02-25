@@ -1,7 +1,7 @@
 import yaml
 import logging
-from ingredient import Ingredient
-from read_csv import read_csv
+from grocery_shopper.read_csv import read_csv
+from grocery_shopper.ingredient import Ingredient
 
 
 def build_ingredients(recipe_file: str, icu_file: str) -> tuple[list[Ingredient], list[Ingredient]]:

@@ -1,5 +1,5 @@
-from ingredient import Ingredient
 from typing import Generator
+from grocery_shopper.ingredient import Ingredient
 
 
 def query_for_url(ings_miss_cu: list[Ingredient],
