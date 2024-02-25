@@ -18,7 +18,7 @@ def archive_contents(shopping_list_file: str, recipe_dir: str, recipe_paths: lis
 
     # Create subdirectory with the specified scheme
     recipe_names = [Path(recipe).stem for recipe in recipe_paths]
-    subdir_name = f'{current_date}-{"-".join(recipe_names)}'
+    subdir_name = f'{"-".join((current_date, *recipe_names))}'
     subdir_path = os.path.join(current_year, subdir_name)
     os.makedirs(subdir_path, exist_ok=True)
 
