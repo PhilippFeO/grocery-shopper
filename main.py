@@ -127,6 +127,7 @@ def main(num_recipes: int = 1,
     print(f'{header}', *final_ingredients, sep='\n', end='\n')
 
     # Archive shopping list and recipes
+    archive_contents(shopping_list_file, recipe_dir, recipes)
 
     urls = handle_ing_miss_cu(all_ings_missing_cu,
                               final_ingredients,

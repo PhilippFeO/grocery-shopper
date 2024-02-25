@@ -5,7 +5,8 @@ from datetime import datetime
 from pathlib import Path
 
 
-def archive_contents(shopping_list_file: str, recipe_paths: list[str]):
+# recipe_dir function parameter because importing from main doesn't work due to circular import
+def archive_contents(shopping_list_file: str, recipe_dir: str, recipe_paths: list[str]):
     """
     Save shopping list to yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/yyyy-mm-dd-recipes[0]-...-recipes[n].txt.
     Create hard links of the used recipes next to it to have all resources close at hand.
@@ -34,7 +35,7 @@ def archive_contents(shopping_list_file: str, recipe_paths: list[str]):
         dst_pdf = os.path.join(subdir_path, recipe_file_pdf)
         try:
             os.link(recipe_path, dst_yaml)
-            os.link(f'recipes/pdf/{recipe_file_pdf}', dst_pdf)
+            os.link(f'{recipe_dir}/pdf/{recipe_file_pdf}', dst_pdf)
         except FileExistsError as fee:
             logging.error(f'Error Message: {fee}')
 
