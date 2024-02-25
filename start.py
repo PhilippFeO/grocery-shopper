@@ -1,4 +1,5 @@
 import argparse
+import os
 import main
 import configparser
 
@@ -42,12 +43,16 @@ def start():
     args = p.parse_args()
 
     dir, firefox_profile = args.dir, args.firefox_profile
-    helper(arg_dir, dir, config, 'No default recipe directory set. Please use\n\t--dir DIRECTORY\nif it\'s your first run.')
-    helper(arg_firefox_profile, firefox_profile, config, 'No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
+    dir = helper(arg_dir, dir, config, 'No default recipe directory set. Please use\n\t--dir DIRECTORY\nif it\'s your first run.')
+    firefox_profile = helper(arg_firefox_profile, firefox_profile, config,
+                             'No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
 
     # Write default values
     with open(config_file, 'w') as f:
         config.write(f)
+
+    os.makedirs(f'{dir}/recipes', exist_ok=True)
+    os.makedirs(f'{dir}/res', exist_ok=True)
 
     # Abfahrt
     main.main(args.num_recipes)
