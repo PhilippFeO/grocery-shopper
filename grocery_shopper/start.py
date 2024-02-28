@@ -46,8 +46,8 @@ def start():
     p.add_argument(f'--{arg_firefox_profile}',
                    help='Path to the firefox profile.',
                    type=str)
-    p.add_argument('--pdf',
-                   metavar='YAML',
+    p.add_argument('--make-pdf',
+                   metavar='recipe.yaml',
                    help='Generate pdfs from yaml files using LaTeX.',
                    nargs='+',
                    type=str)
