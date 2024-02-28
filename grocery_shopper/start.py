@@ -7,7 +7,7 @@ from grocery_shopper import yaml2pdf
 from grocery_shopper.vars import defaults_file
 
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.WARNING,
                     format='[%(levelname)s: %(asctime)s] %(message)s',
                     datefmt=' %H:%M:%S')
 
