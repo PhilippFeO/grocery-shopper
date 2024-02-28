@@ -51,6 +51,11 @@ def start():
                    help='Generate pdfs from yaml files using LaTeX.',
                    nargs='+',
                    type=str)
+    p.add_argument('--no-random',
+                   metavar='recipe.yaml',
+                   help='Shop ingredients for submitted recipes.',
+                   nargs='+',
+                   type=str)
     args = p.parse_args()
 
     dir, firefox_profile = args.dir, args.firefox_profile
@@ -73,6 +78,11 @@ def start():
 
     # Abfahrt
     if args.num_recipes:
+        main.main(num_recipes=args.num_recipes)
+    if args.no_random:
+        main.main(recipe_files=args.no_random)
+    if args.make_pdf:
+        yaml2pdf.yaml2pdf(args.make_pdf, recipe_dir, res_dir)
 
 
 if __name__ == "__main__":
