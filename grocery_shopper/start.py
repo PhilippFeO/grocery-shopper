@@ -73,10 +73,6 @@ def start():
 
     # Abfahrt
     if args.num_recipes:
-        main.main(args.num_recipes)
-        print('\n\nEnjoy your meals and saved time! :)')
-    if args.pdf:
-        yaml2pdf.yaml2pdf(args.pdf, recipe_dir, res_dir)
 
 
 if __name__ == "__main__":

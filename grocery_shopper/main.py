@@ -135,6 +135,8 @@ def main(num_recipes: int = 1,
     # subprocess.run([editor, shopping_list_file])
     subprocess.run([*firefox.split(' '), *urls], stderr=subprocess.DEVNULL)
 
+    print('\n\nEnjoy your meals and saved time! :)')
+
 
 if __name__ == "__main__":
     main()
