@@ -51,9 +51,9 @@ def start():
                    help='Generate pdfs from yaml files using LaTeX.',
                    nargs='+',
                    type=str)
-    p.add_argument('--no-random',
+    p.add_argument('--take',
                    metavar='recipe.yaml',
-                   help='Shop ingredients for submitted recipes.',
+                   help='Take the following ingredients and do no random selection.',
                    nargs='+',
                    type=str)
     args = p.parse_args()
@@ -79,8 +79,8 @@ def start():
     # Abfahrt
     if args.num_recipes:
         main.main(num_recipes=args.num_recipes)
-    if args.no_random:
-        main.main(recipe_files=args.no_random)
+    if args.take:
+        main.main(recipe_files=args.take)
     if args.make_pdf:
         yaml2pdf.yaml2pdf(args.make_pdf, recipe_dir, res_dir)
 
