@@ -7,6 +7,7 @@ from math import ceil
 from pathlib import Path
 from itertools import zip_longest
 from grocery_shopper.ingredient import Ingredient
+from grocery_shopper.read_default_values import read_default_values
 
 
 class Recipe:
@@ -21,14 +22,16 @@ class Recipe:
 
     def to_latex(self):
         # TODO: Write strings to pipe, read form pipe in latex file <06-02-2024>
-        res_dir = 'res'
+        config = read_default_values()
+        dir = config['General']['dir']
+        res_dir = f'{dir}/res'
         # Recipe title
         with open(f'{res_dir}/title.tex', 'w') as recipe_name_file:
             recipe_name_file.write(self.recipe_name)
         # Preparation
         with open(f'{res_dir}/preparation.tex', 'w') as preparation_file:
             # Each step starts with '\d{1,2}.\s', ie 3-4 chars
-            # TODO: Adjust slice according to above comment <13-02-2024, Philipp Rost>
+            # TODO: Adjust slice according to above comment <13-02-2024>
             #   Idea: 'preparation' object containing number and instruction separately
             # Works because Latex collapses multiple spaces (after `\item`) into one
             preparation_file.writelines((f'\\item {step[3:]}\n' for step in self.preparation))
