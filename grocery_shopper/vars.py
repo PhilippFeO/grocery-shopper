@@ -1,1 +1,1 @@
-defaults_file: str = 'grocery_shopper/defaults.ini'
+defaults_file: str = 'defaults.ini'

@@ -2,6 +2,7 @@ import argparse
 import configparser
 import logging
 import os
+import sys
 from grocery_shopper import main
 from grocery_shopper import yaml2pdf
 from grocery_shopper.vars import defaults_file
@@ -20,18 +21,21 @@ def helper(arg_name, arg_value, config, own_err_msg):
     if value is None:
         try:
             value = config['General'][arg_name]
-        except (configparser.NoSectionError, configparser.NoOptionError):
+        except (configparser.NoSectionError, configparser.NoOptionError, KeyError):
             logging.error(own_err_msg)
+            sys.exit(1)
     else:
         config['General'][arg_name] = os.path.expanduser(value)
     return value
 
 
 def start():
+    grocery_shopper_dir = os.path.dirname(__file__)
+    defaults_file_path = f'{grocery_shopper_dir}/{defaults_file}'
     config = configparser.ConfigParser()
     try:
         # According to Doc: Use read_file() when file is expected to assist
-        config.read_file(open(defaults_file))
+        config.read_file(open(defaults_file_path))
     except FileNotFoundError:
         config['General'] = {}
     p = argparse.ArgumentParser(__file__)
@@ -64,7 +68,7 @@ def start():
                              'No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
 
     # Write default values
-    with open(defaults_file, 'w') as f:
+    with open(defaults_file_path, 'w') as f:
         config.write(f)
 
     # Create necessary directories
