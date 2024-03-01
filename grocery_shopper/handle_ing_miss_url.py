@@ -1,3 +1,4 @@
+import random
 from typing import Generator
 from grocery_shopper.ingredient import Ingredient
 
@@ -7,6 +8,7 @@ def query_for_url(ings_miss_cu: list[Ingredient],
     """
     Ask user for URL of every `Ingredient` in `ing_miss_url`, append collected URLs to `icu_file` ([i]ngredient, [c]ategory, [u]rl).
     """
+    icu_entries = ''
     for ing in ings_miss_cu:
         c = input(f'\nCategory of "{ing.name}": ')
         # Only change `category` if there was a "real" input ("real" == "not empty")
@@ -14,13 +16,15 @@ def query_for_url(ings_miss_cu: list[Ingredient],
         if c != '':
             ing.category = c
         # Same with url
-        u = input(f'URL of "{ing.name}": ')
+        u = input(f'URL(s) of "{ing.name}": ')
         if u != '':
-            ing.url = u
+            urls = u.split(' ')
+            ing.url = random.sample(urls, 1)[0]
+        icu_entries = icu_entries + f'{ing.name},{ing.category},{",".join(urls)}'
     # Now, all missing `category` and `url` were completed => append to CSV file
-    icu_entries = '\n'.join((f'{ing.name},{ing.category},{ing.url}' for ing in ings_miss_cu)) + '\n'
     with open(icu_file, 'a') as f:
-        f.write(icu_entries)
+        # Remove last '\n' char to have a continuous CSV file
+        f.write(icu_entries.rstrip())
 
 
 def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
@@ -35,7 +39,7 @@ def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
     intersection = set(ings_miss_cu) & set(final_ingredients)
     if intersection:
         while True:
-            print("Do you want to add the missing `category` and `url` for the following ingredients?\n")
+            print("Do you want to add the missing Category and URL for the following ingredients? You can add multiple URLs separated by space.\n")
             ing_names_miss_url: Generator[str, None, None] = (f'{ing.name}\n' for ing in intersection)
             join_str = '\t - '
             bullet_list_ing_miss_url: str = join_str + join_str.join(ing_names_miss_url)
