@@ -2,7 +2,7 @@
 No "What should I eat for dinner today?" and manually buying ever again! Recipes are selected randomly and a firefox instance will open to buy the necessary ingredients online[^1] – Deciding and grocery shopping in one step!
 
 ## Installation
-A non technical prerequisite is a supermarket or delivery service with the possibility to buy online.  
+A non technical prerequisite is a supermarket or delivery service with the possibility to buy online.
 
 Clone the git repository (wherever you like):
 ```sh
@@ -23,6 +23,7 @@ Background: `recipes/` is for your recipes. `misc/` is for additional stuff. Pla
 5. The programm will parse the randomly chosen recipes and open the default text editor (`$EDITOR`) with all ingredients. There you can delete these ingredients you already have in stock. Save and quit after you are done.
 6. The URLs for each ingredient are looked up. If it can't find one for the specific ingredient, it will ask you to manually add one via the command line. The submitted links are saved and reused separately from the recipe. Ingredient and link are saved in a destinct file under `res/`. This directory will be created next to `recipes/` and `misc/`.
 7. After all URLs were collected, Firefox opens the URLs in tabs using your new profile.
+8. The final shopping list (ie. the contents of the buffer you edited with `$EDITOR`) and the recipes are archived and a sym link (`Selection`) is created (to have some traceability). All next to `recipes/` and `misc/`.
 
 ## Structure of your recipes
 Recipes need to be saved as `yaml` files and have the following parts, `recipe` and `ingredients` are mandatory.
