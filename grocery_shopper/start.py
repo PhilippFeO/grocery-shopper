@@ -62,10 +62,9 @@ def start():
                    type=str)
     args = p.parse_args()
 
-    dir, firefox_profile = args.dir, args.firefox_profile
-    dir = helper(arg_dir, dir, config, 'No default recipe directory set. Please use\n\t--dir DIRECTORY\nif it\'s your first run.')
-    firefox_profile = helper(arg_firefox_profile, firefox_profile, config,
-                             'No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
+    dir = helper(arg_dir, args.dir, config, 'No default recipe directory set. Please use\n\t--dir DIRECTORY\nif it\'s your first run.')
+    _ = helper(arg_firefox_profile, args.firefox_profile, config,
+               'No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
 
     # Write default values
     with open(defaults_file_path, 'w') as f:
@@ -81,11 +80,13 @@ def start():
     os.makedirs(misc_dir, exist_ok=True)
 
     # Abfahrt
-    if args.num_recipes:
+    if args.take and args.num_recipes:
+        main.main(num_recipes=args.num_recipes, recipe_files=args.take)
+    elif args.num_recipes:
         main.main(num_recipes=args.num_recipes)
-    if args.take:
+    elif args.take:
         main.main(recipe_files=args.take)
-    if args.make_pdf:
+    elif args.make_pdf:
         yaml2pdf.yaml2pdf(args.make_pdf, recipe_dir, res_dir)
 
 

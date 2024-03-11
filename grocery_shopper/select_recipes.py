@@ -5,7 +5,7 @@ import random
 import logging
 
 
-def select_recipes(num_recipes, recipe_dir) -> list[str]:
+def select_recipes(num_recipes, recipe_dir) -> tuple[str]:
     """Randomly selects submitted number of recipes.
 
     :param int num_recipes: Number of recipes
@@ -30,4 +30,4 @@ def select_recipes(num_recipes, recipe_dir) -> list[str]:
     indices = random.sample(range(num_files), num_recipes)
 
     # Loop through the randomly chosen indices and get the corresponding files
-    return [yaml_files[index] for index in indices]
+    return tuple(yaml_files[index] for index in indices)

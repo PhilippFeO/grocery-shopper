@@ -10,7 +10,7 @@ from grocery_shopper.select_recipes import select_recipes
 from grocery_shopper.read_default_values import read_default_values
 
 
-def main(num_recipes: int = 1,
+def main(num_recipes: int = 0,
          recipe_files: list[str] = None):
     """
     Conducts shopping process. Either callable with number of recipes to randomly select some or with list of recipes.
@@ -20,10 +20,15 @@ def main(num_recipes: int = 1,
     dir = config['General']['dir']
     recipe_dir = f'{dir}/recipes'
 
-    if recipe_files:
-        recipes = tuple(f'{dir}/{recipe_file}' for recipe_file in recipe_files)
-    else:
+    # TODO: Move recipe selecting into start.py and let main do the processing <11-03-2024>
+    #   Currently I have the following if logic twice, addtionally it is unreadable here.
+    if recipe_files and num_recipes > 0:
+        recipes = tuple(f'{dir}/{recipe_file}' for recipe_file in recipe_files) \
+            + select_recipes(num_recipes, recipe_dir)
+    elif num_recipes > 0:
         recipes = select_recipes(num_recipes, recipe_dir)
+    elif recipe_files:
+        recipes = tuple(f'{dir}/{recipe_file}' for recipe_file in recipe_files)
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
