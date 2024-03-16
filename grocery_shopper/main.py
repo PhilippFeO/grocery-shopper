@@ -115,7 +115,7 @@ def main(num_recipes: int = 0,
                 break
     # TODO: When printing give user the chance to reedit list <18-01-2024>
     print("\nFinal shopping list:")
-    print(f'{header}', *final_ingredients, sep='\n', end='\n')
+    print(f'{header}', *sorted(final_ingredients, key=lambda ingredient: ingredient.name), sep='\n', end='\n')
 
     # Archive shopping list and recipes
     archive_contents(shopping_list_file, recipe_dir, recipes)
