@@ -48,3 +48,6 @@ class Ingredient:
                                                 category])))
         s = ' '.join((s, meal))
         return s
+
+    def str_with_url(self):
+        return self.__str__() + ' ' * Ingredient._space_column_width + self.url

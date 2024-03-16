@@ -40,7 +40,7 @@ def main(num_recipes: int = 0,
     header = Ingredient.to_table_string()
     hline = '\n--------------------------------------------------------------------\n'
     header = header + hline
-    shopping_list_str = []
+    shopping_list_str = [header]
 
     def collect_ingredients_helper(recipe_file):
         # `valid_ingredients` support `category` and `url`
@@ -51,7 +51,6 @@ def main(num_recipes: int = 0,
                       key=lambda ingredient: ingredient.name)
 
     # TODO: As exercise: parallelize reading/parsing the recipe.yaml <05-01-2024>
-    shopping_list_str.append(f'{header}')
     for recipe_file in recipes:
         all_ingredients.extend(collect_ingredients_helper(recipe_file))
     shopping_list_str.append('\n'.join((f"{ingredient}" for ingredient in all_ingredients)) +
@@ -62,12 +61,10 @@ def main(num_recipes: int = 0,
     # Iterating over `sys.argv[1:] + misc_files` would only be possibe with various if-statements
     # because the CLI provided files don't get a "filename" heading like `misc_files` do.
     # To many if-statements affect readability, hence two for loops and helpfer function.
-    yaml_files = glob.glob(os.path.join(misc_dir, '*.yaml'))
-    for file in yaml_files:
-        file_stem = Path(file).stem
+    for file in glob.glob(os.path.join(misc_dir, '*.yaml')):
         misc_ingredients = collect_ingredients_helper(file)
         all_ingredients.extend(misc_ingredients)
-        shopping_list_str.append(f'{file_stem}:\n' +
+        shopping_list_str.append(f'{Path(file).stem}:\n' +
                                  f'{header}' +
                                  '\n'.join((f"{ingredient}" for ingredient in misc_ingredients)) +
                                  '\n' * 3)
@@ -80,9 +77,8 @@ def main(num_recipes: int = 0,
 
     # Open shopping list in $EDITOR to modify it
     # (some ingredients may already be in stock, like salt, so we can delete/don't have to buy it)
-    editor = os.environ['EDITOR']
     # Set cursor on Position (3,1) for my Vi, Vim and Neovim friends :)
-    if editor in {'vi', 'vim', 'nvim'}:
+    if (editor := os.environ['EDITOR']) in {'vi', 'vim', 'nvim'}:
         subprocess.run([editor, '+call cursor(3, 1)', shopping_list_file])
     else:
         subprocess.run([editor, shopping_list_file])
@@ -113,16 +109,24 @@ def main(num_recipes: int = 0,
             if ingredient.name[:Ingredient._padding] == i and ingredient.quantity == q:
                 final_ingredients.append(ingredient)
                 break
-    # TODO: When printing give user the chance to reedit list <18-01-2024>
-    print("\nFinal shopping list:")
-    print(f'{header}', *sorted(final_ingredients, key=lambda ingredient: ingredient.name), sep='\n', end='\n')
 
     # Archive shopping list and recipes
     archive_contents(shopping_list_file, recipe_dir, recipes)
 
+    # Side effect: `Ingredient` instances in `final_ingredients` are now equipped with `url` attributes
     urls = handle_ing_miss_cu(all_ings_missing_cu,
                               final_ingredients,
                               icu_file)
+
+    # TODO: When printing give user the chance to reedit list <18-01-2024>
+    # Print sorted final shopping list
+    print("\nFinal shopping list:")
+    print(f'{header}',
+          *(final_ingredients_sorted := sorted(final_ingredients, key=lambda ingredient: ingredient.name)),
+          sep='\n',
+          end='\n')
+    with open(shopping_list_file, 'w') as slf:
+        slf.writelines((f'{ing.str_with_url()}\n' for ing in final_ingredients_sorted))
 
     # Open firefox with specific profile
     # subpress warnings
