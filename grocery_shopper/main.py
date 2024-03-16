@@ -2,12 +2,13 @@ import glob
 import os
 import subprocess
 from pathlib import Path
-from grocery_shopper.ingredient import Ingredient
+from grocery_shopper.archive_contents import archive_contents
 from grocery_shopper.build_ingredients import build_ingredients
 from grocery_shopper.handle_ing_miss_url import handle_ing_miss_cu
-from grocery_shopper.archive_contents import archive_contents
-from grocery_shopper.select_recipes import select_recipes
+from grocery_shopper.ingredient import Ingredient
+from grocery_shopper.make_table import make_table
 from grocery_shopper.read_default_values import read_default_values
+from grocery_shopper.select_recipes import select_recipes
 
 
 def main(num_recipes: int = 0,
@@ -114,19 +115,20 @@ def main(num_recipes: int = 0,
     archive_contents(shopping_list_file, recipe_dir, recipes)
 
     # Side effect: `Ingredient` instances in `final_ingredients` are now equipped with `url` attributes
+    # => Makes printing with URL in the following possible
     urls = handle_ing_miss_cu(all_ings_missing_cu,
                               final_ingredients,
                               icu_file)
 
     # TODO: When printing give user the chance to reedit list <18-01-2024>
-    # Print sorted final shopping list
+    # Print and save sorted final shopping list
     print("\nFinal shopping list:")
     print(f'{header}',
           *(final_ingredients_sorted := sorted(final_ingredients, key=lambda ingredient: ingredient.name)),
           sep='\n',
           end='\n')
     with open(shopping_list_file, 'w') as slf:
-        slf.writelines((f'{ing.str_with_url()}\n' for ing in final_ingredients_sorted))
+        slf.write(make_table(final_ingredients_sorted, spacing=3, with_url=True))
 
     # Open firefox with specific profile
     # subpress warnings
