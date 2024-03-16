@@ -31,8 +31,7 @@ def archive_contents(shopping_list_file: str, recipe_dir: str, recipe_paths: lis
     # recipe_file scheme: file.ext
     for recipe_file, recipe_path in zip((Path(recipe_path).name for recipe_path in recipe_paths), recipe_paths):
         dst_yaml = os.path.join(subdir_path, recipe_file)
-        recipe_file_pdf = recipe_file.replace('yaml', 'pdf')
-        dst_pdf = os.path.join(subdir_path, recipe_file_pdf)
+        dst_pdf = os.path.join(subdir_path, (recipe_file_pdf := recipe_file.replace('yaml', 'pdf')))
         try:
             os.link(recipe_path, dst_yaml)
             os.link(f'{recipe_dir}/pdf/{recipe_file_pdf}', dst_pdf)
@@ -40,8 +39,7 @@ def archive_contents(shopping_list_file: str, recipe_dir: str, recipe_paths: lis
             logging.error(f'Error Message: {fee}')
 
     # Create symlink to folder containing shopping list and recipes
-    link_name = 'Selection'
-    temp_link = link_name + ".new"
+    temp_link = (link_name := 'Selection') + ".new"
     try:
         os.remove(link_name)
     except FileNotFoundError as fnfe:

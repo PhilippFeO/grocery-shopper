@@ -10,14 +10,12 @@ def query_for_url(ings_miss_cu: list[Ingredient],
     """
     icu_entries = ''
     for ing in ings_miss_cu:
-        c = input(f'\nCategory of "{ing.name}": ')
         # Only change `category` if there was a "real" input ("real" == "not empty")
         # Otherwise, `category` keeps the default value set in the constructor
-        if c != '':
+        if (c := input(f'\nCategory of "{ing.name}": ')) != '':
             ing.category = c
         # Same with url
-        u = input(f'URL(s) of "{ing.name}": ')
-        if u != '':
+        if (u := input(f'URL(s) of "{ing.name}": ')) != '':
             urls = u.split(' ')
             ing.url = random.sample(urls, 1)[0]
         icu_entries = icu_entries + f'{ing.name},{ing.category},{",".join(urls)}'
@@ -38,21 +36,16 @@ def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
     """
     intersection = set(ings_miss_cu) & set(final_ingredients)
     if intersection:
-        while True:
-            print("Do you want to add the missing Category and URL for the following ingredients? You can add multiple URLs separated by space.\n")
-            ing_names_miss_url: Generator[str, None, None] = (f'{ing.name}\n' for ing in intersection)
-            join_str = '\t - '
-            bullet_list_ing_miss_url: str = join_str + join_str.join(ing_names_miss_url)
-            print(f'{bullet_list_ing_miss_url}')
-            user_input: str = input("yes/no: ").lower()
-            if user_input in {'yes', 'y'}:
-                query_for_url(intersection,
-                              icu_file)
-                break
-            elif user_input in {'no', 'n'}:
-                break
-            else:
-                print("Invalid input. Please enter 'yes' or 'no'.")
+        print("Do you want to add the missing Category and URL for the following ingredients? You can add multiple URLs separated by space.\n")
+        ing_names_miss_url: Generator[str, None, None] = (f'{ing.name}\n' for ing in intersection)
+        join_str = '\t - '
+        bullet_list_ing_miss_url: str = join_str + join_str.join(ing_names_miss_url)
+        print(f'{bullet_list_ing_miss_url}')
+        while (user_input := input("yes/no: ").lower()) not in {'yes', 'y', 'no', 'n'}:
+            print("Invalid input. Please enter 'yes' or 'no'.")
+        if user_input in {'yes', 'y'}:
+            query_for_url(intersection,
+                          icu_file)
     # `final_ingredients` shares `Ingerdient`s from `valid_ingredients` and `ings_miss_cu` (s. `main.py`), since we are dealing with objects, **references** were passed around.
     urls = tuple(ing.url for ing in final_ingredients)
     return urls
