@@ -3,6 +3,7 @@ import glob
 import sys
 import random
 import logging
+from pathlib import Path
 
 
 def select_recipes(num_recipes, recipe_dir) -> list[str]:
@@ -31,19 +32,20 @@ def select_recipes(num_recipes, recipe_dir) -> list[str]:
 
     while True:
         print('The following recipes were chosen:')
-        # for i, recipe in enumerate(recipes):
         for idx, recipe_index in enumerate(recipe_indices):
-            print(f'\t{idx + 1}. {yaml_files[recipe_index]}')
+            recipe_file_name = Path(yaml_files[recipe_index]).stem.replace('_', ' ')
+            print(f'\t{idx + 1}. {recipe_file_name}')
         print('Proceed: yes/y\n',
               f'Reselect: {"/".join(str(i) for i in range(num_recipes+1))} (0 = all)',
               sep='')
-        while (user_input := input("Input: ").lower()) not in (admissible := {'yes', 'y', 'all'} | {str(i) for i in range(num_recipes+1)}):
-            print(f"Invalid input. Please enter one of the following:\n\t{admissible}.")
+        # Check for admissible inputs
+        while (user_input := input("Input: ").lower()) not in (admissible := ', '.join(['yes', 'y', 'all'] + [str(i) for i in range(num_recipes+1)])):
+            print(f"Invalid input. Please enter one of the following:\n\t{admissible}")
         if user_input in {'yes', 'y'}:
             break
         elif user_input in {'0'}:
             recipe_indices = random.sample(range(num_files), num_recipes)
-        # Some number was tipped
+        # User inserted a valid number
         else:
             # Select new recipe until a different one was chosen
             # TODO: Remove potential of running indefinetly <17-03-2024>
