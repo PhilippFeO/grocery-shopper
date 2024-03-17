@@ -26,10 +26,10 @@ class Recipe:
         dir = config['General']['dir']
         res_dir = f'{dir}/res'
         # Recipe title
-        with open(f'{res_dir}/title.tex', 'w') as recipe_name_file:
+        with open('/tmp/title.tex', 'w') as recipe_name_file:
             recipe_name_file.write(self.recipe_name)
         # Preparation
-        with open(f'{res_dir}/preparation.tex', 'w') as preparation_file:
+        with open('/tmp/preparation.tex', 'w') as preparation_file:
             # Each step starts with '\d{1,2}.\s', ie 3-4 chars
             # TODO: Adjust slice according to above comment <13-02-2024>
             #   Idea: 'preparation' object containing number and instruction separately
@@ -62,7 +62,7 @@ class Recipe:
             ing1_as_field, ing2_as_field = color_ingredient(ing1), color_ingredient(ing2)
             table_row = f'{ing1_as_field} & {ing2_as_field}\\\\\n'
             table_body += table_row
-        with open(f'{res_dir}/ingredients.tex', 'w') as ingredients_file:
+        with open('/tmp/ingredients.tex', 'w') as ingredients_file:
             ingredients_file.writelines(table_body)
 
 
