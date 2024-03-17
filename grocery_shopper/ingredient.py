@@ -1,17 +1,11 @@
 class Ingredient:
-    field_names = ['?', 'Name', 'Menge', 'Kategorie', 'Gericht']
-    # Dont hardcode column number of "Name" because this number is used to filter for the ingredients with awk (s. ./main.py)
-    _name_col_num = field_names.index('Name') + 1
-    _padding = 15
-    _space_column_width = 3
-
     def __init__(self, name, quantity, optional=False,
                  category='N/A-CATEGORY',
                  category_weight=0,
                  url='N/A-URL',
-                 meal='N/A-MEAL'):  # I hate it
+                 meal='N/A-MEAL'):
         self.name = name
-        self.quantity = str(quantity)  # 2 (pieces), 250g, 1 Block => string necessary
+        self.quantity = str(quantity)  # may have one of the following form: 2 (pieces), 250g, 1 Block => string necessary
         self.optional = optional
         self.category = category
         # Category weight is assigned accoirding to order in supermarket (=> walk from
@@ -21,33 +15,3 @@ class Ingredient:
         self.category_weight = category_weight
         self.url = url
         self.meal = meal
-
-    def __str__(self):
-        return Ingredient.to_table_string([self.optional,
-                                           self.name,
-                                           self.quantity,
-                                           self.category,
-                                           self.meal])
-
-    # Also used for crafting a header for the table, hence class method and first argument as list
-    # (The field names are provided as list, attributes follow)
-    # Padding, to have a small neat table
-    @classmethod
-    def to_table_string(cls, attributes: list = field_names):
-        """
-        Format elements (field names, ingredient) as string for shopping list.
-        """
-        optional, name, quantity, category, meal = attributes
-        # Cap at _padding, no matter what (keep in mind when compsing a recipe)
-        pad = Ingredient._padding
-        scw = Ingredient._space_column_width
-        s = '?' if optional == '?' else '1' if optional else '•'
-        s = (' ' * scw).join((s, *(f"{attr[:pad]:<{pad}}"
-                                   for attr in [name,
-                                                quantity,
-                                                category])))
-        s = ' '.join((s, meal))
-        return s
-
-    def str_with_url(self):
-        return self.__str__() + ' ' * Ingredient._space_column_width + self.url

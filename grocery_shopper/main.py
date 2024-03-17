@@ -6,7 +6,7 @@ from grocery_shopper.archive_contents import archive_contents
 from grocery_shopper.build_ingredients import build_ingredients
 from grocery_shopper.handle_ing_miss_url import handle_ing_miss_cu
 from grocery_shopper.ingredient import Ingredient
-from grocery_shopper.make_table import make_table
+from grocery_shopper.make_table import make_table, spacing, name_col_num
 from grocery_shopper.read_default_values import read_default_values
 from grocery_shopper.select_recipes import select_recipes
 
@@ -38,10 +38,7 @@ def main(num_recipes: int = 0,
     # Superlist to store ingredients from all files
     all_ingredients: list[Ingredient] = []
     all_ings_missing_cu: list[Ingredient] = []
-    header = Ingredient.to_table_string()
-    hline = '\n--------------------------------------------------------------------\n'
-    header = header + hline
-    shopping_list_str = [header]
+    shopping_list_str = []
 
     def collect_ingredients_helper(recipe_file):
         # `valid_ingredients` support `category` and `url`
@@ -54,8 +51,8 @@ def main(num_recipes: int = 0,
     # TODO: As exercise: parallelize reading/parsing the recipe.yaml <05-01-2024>
     for recipe_file in recipes:
         all_ingredients.extend(collect_ingredients_helper(recipe_file))
-    shopping_list_str.append('\n'.join((f"{ingredient}" for ingredient in all_ingredients)) +
-                             '\n' * 3)
+    # shopping_list_str.append('\n'.join((f"{ingredient}" for ingredient in all_ingredients)) + '\n' * 3)
+    shopping_list_str.append(make_table(all_ingredients) + '\n' * 2)
 
     misc_dir = f'{dir}/misc'
     # I want to add a destinct heading for each file in misc_dir misc.
@@ -66,15 +63,15 @@ def main(num_recipes: int = 0,
         misc_ingredients = collect_ingredients_helper(file)
         all_ingredients.extend(misc_ingredients)
         shopping_list_str.append(f'{Path(file).stem}:\n' +
-                                 f'{header}' +
-                                 '\n'.join((f"{ingredient}" for ingredient in misc_ingredients)) +
-                                 '\n' * 3)
+                                 make_table(misc_ingredients) +
+                                 '\n' * 2)
 
     # Write the shopping list
     shopping_list_file = 'shopping_list.txt'
     with open(shopping_list_file, 'w') as slf:
-        for partial_shopping_list in shopping_list_str:
-            slf.write(partial_shopping_list)
+        # for partial_shopping_list in shopping_list_str:
+        #     slf.write(partial_shopping_list)
+        slf.writelines((f'{partial_shopping_list}\n' for partial_shopping_list in shopping_list_str))
 
     # Open shopping list in $EDITOR to modify it
     # (some ingredients may already be in stock, like salt, so we can delete/don't have to buy it)
@@ -88,8 +85,8 @@ def main(num_recipes: int = 0,
     # Dont hardcode column number, otherwise changes have to be adapted here again => annoying
     # Keep `name` column and `quantity` column (the following one)
     # Insert `•` as separator
-    awk_output: str = subprocess.run(
-        ['awk', '-F', ' {2,}', f'{{print ${Ingredient._name_col_num}, "•", ${Ingredient._name_col_num + 1}}}', shopping_list_file],
+    awk_output = subprocess.run(
+        ['awk', '-F', f' {{{spacing},}}', f'{{print ${name_col_num}, "•", ${name_col_num + 1}}}', shopping_list_file],
         capture_output=True,
         text=True)
     # Firt two entries are "Name" and "" (empty line) due to header
@@ -107,12 +104,9 @@ def main(num_recipes: int = 0,
     for i, q in ing_quant:
         for ingredient in all_ingredients:
             # Enrties in shopping list are cut after 15 chars, so comparison is based on these
-            if ingredient.name[:Ingredient._padding] == i and ingredient.quantity == q:
+            if ingredient.name == i and ingredient.quantity == q:
                 final_ingredients.append(ingredient)
                 break
-
-    # Archive shopping list and recipes
-    archive_contents(shopping_list_file, recipe_dir, recipes)
 
     # Side effect: `Ingredient` instances in `final_ingredients` are now equipped with `url` attributes
     # => Makes printing with URL in the following possible
@@ -122,13 +116,18 @@ def main(num_recipes: int = 0,
 
     # TODO: When printing give user the chance to reedit list <18-01-2024>
     # Print and save sorted final shopping list
+    final_ingredients_sorted = sorted(final_ingredients,
+                                      key=lambda ingredient: ingredient.name)
     print("\nFinal shopping list:")
-    print(f'{header}',
-          *(final_ingredients_sorted := sorted(final_ingredients, key=lambda ingredient: ingredient.name)),
+    print(make_table(final_ingredients_sorted),
           sep='\n',
           end='\n')
     with open(shopping_list_file, 'w') as slf:
-        slf.write(make_table(final_ingredients_sorted, spacing=3, with_url=True))
+        slf.write(make_table(final_ingredients_sorted,
+                             with_url=True))
+
+    # Archive shopping list and recipes
+    archive_contents(shopping_list_file, recipe_dir, recipes)
 
     # Open firefox with specific profile
     # subpress warnings
