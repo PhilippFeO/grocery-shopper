@@ -11,7 +11,8 @@ Rezepte.md
 out/
 out/
 # Ignore files, directories and links
-*pdf*
+*.pdf
+pdf
 defaults.ini
 recipes/
 res/
