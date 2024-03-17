@@ -29,22 +29,26 @@ def select_recipes(num_recipes, recipe_dir) -> list[str]:
 
     # Generate an array of random indices within the range of the number of files
     recipe_indices = random.sample(range(num_files), num_recipes)
+    selection = [yaml_files[i] for i in recipe_indices]
 
     while True:
         print('The following recipes were chosen:')
-        for idx, recipe_index in enumerate(recipe_indices):
-            recipe_file_name = Path(yaml_files[recipe_index]).stem.replace('_', ' ')
-            print(f'\t{idx + 1}. {recipe_file_name}')
+        for idx, recipe_path in enumerate(selection):
+            recipe_name = Path(recipe_path).stem.replace('_', ' ')
+            print(f'\t{idx + 1}. {recipe_name}')
         print('Proceed: yes/y\n',
               f'Reselect: {"/".join(str(i) for i in range(num_recipes+1))} (0 = all)',
               sep='')
         # Check for admissible inputs
-        while (user_input := input("Input: ").lower()) not in (admissible := ', '.join(['yes', 'y', 'all'] + [str(i) for i in range(num_recipes+1)])):
+        admissible = ', '.join(['yes', 'y', 'all'] + [str(i) for i in range(num_recipes+1)])
+        while (user_input := input("Input: ").lower()) not in admissible:
             print(f"Invalid input. Please enter one of the following:\n\t{admissible}")
+        # Asses user input
         if user_input in {'yes', 'y'}:
             break
-        elif user_input in {'0'}:
+        elif user_input in {'0', 'all'}:
             recipe_indices = random.sample(range(num_files), num_recipes)
+            selection = [yaml_files[i] for i in recipe_indices]
         # User inserted a valid number
         else:
             # Select new recipe until a different one was chosen
@@ -52,8 +56,7 @@ def select_recipes(num_recipes, recipe_dir) -> list[str]:
             user_input = int(user_input) - 1
             while recipe_indices[user_input] == (new_recipe_index := random.sample(range(num_files), 1)[0]):
                 continue
-            recipe_indices[user_input] = new_recipe_index
+            selection[user_input] = yaml_files[new_recipe_index]
         print()
 
-    # Loop through the randomly chosen indices and get the corresponding files
-    return [yaml_files[index] for index in recipe_indices]
+    return selection
