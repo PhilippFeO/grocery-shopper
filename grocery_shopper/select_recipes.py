@@ -5,10 +5,11 @@ import random
 import logging
 
 
-def select_recipes(num_recipes, recipe_dir) -> tuple[str]:
+def select_recipes(num_recipes, recipe_dir) -> list[str]:
     """Randomly selects submitted number of recipes.
 
     :param int num_recipes: Number of recipes
+    :param str recipe_dir: Directory containing all recipes
     """
     # Check if the directory exists
     if not os.path.isdir(recipe_dir):
@@ -16,8 +17,7 @@ def select_recipes(num_recipes, recipe_dir) -> tuple[str]:
         sys.exit(1)
 
     # Check if there are files in the directory
-    yaml_files = glob.glob(os.path.join(recipe_dir, '*.yaml'))
-    num_files = len(yaml_files)
+    num_files = len((yaml_files := glob.glob(os.path.join(recipe_dir, '*.yaml'))))
     if num_files == 0:
         logging.error(f"No yaml-files found in the directory '{recipe_dir}'.")
         sys.exit(1)
@@ -27,7 +27,31 @@ def select_recipes(num_recipes, recipe_dir) -> tuple[str]:
         sys.exit(1)
 
     # Generate an array of random indices within the range of the number of files
-    indices = random.sample(range(num_files), num_recipes)
+    recipe_indices = random.sample(range(num_files), num_recipes)
+
+    while True:
+        print('The following recipes were chosen:')
+        # for i, recipe in enumerate(recipes):
+        for idx, recipe_index in enumerate(recipe_indices):
+            print(f'\t{idx + 1}. {yaml_files[recipe_index]}')
+        print('Proceed: yes/y\n',
+              f'Reselect: {"/".join(str(i) for i in range(num_recipes+1))} (0 = all)',
+              sep='')
+        while (user_input := input("Input: ").lower()) not in (admissible := {'yes', 'y', 'all'} | {str(i) for i in range(num_recipes+1)}):
+            print(f"Invalid input. Please enter one of the following:\n\t{admissible}.")
+        if user_input in {'yes', 'y'}:
+            break
+        elif user_input in {'0'}:
+            recipe_indices = random.sample(range(num_files), num_recipes)
+        # Some number was tipped
+        else:
+            # Select new recipe until a different one was chosen
+            # TODO: Remove potential of running indefinetly <17-03-2024>
+            user_input = int(user_input) - 1
+            while recipe_indices[user_input] == (new_recipe_index := random.sample(range(num_files), 1)[0]):
+                continue
+            recipe_indices[user_input] = new_recipe_index
+        print()
 
     # Loop through the randomly chosen indices and get the corresponding files
-    return tuple(yaml_files[index] for index in indices)
+    return [yaml_files[index] for index in recipe_indices]
