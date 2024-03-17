@@ -34,7 +34,7 @@ def build_ingredients(recipe_file: str, icu_file: str) -> tuple[list[Ingredient]
         # File will be created in the following, s. handle_ing_miss_url.py
         pass
     for ingredient in ingredients:
-        # Retrive information from CSV files ('category', 'url' and 'category_weight')
+        # Retrive information from CSV files ('category', 'url')
         ingredient_name = ingredient['name']
         # Check for 'KeyError' in all CSV files
         # DONE: KeyError might occur <05-01-2024>
