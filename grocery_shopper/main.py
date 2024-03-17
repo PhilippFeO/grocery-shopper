@@ -3,7 +3,7 @@ import os
 import subprocess
 from pathlib import Path
 from grocery_shopper.archive_contents import archive_contents
-from grocery_shopper.build_ingredients import build_ingredients
+from grocery_shopper.build_ingredients import read_icu_file
 from grocery_shopper.handle_ing_miss_url import handle_ing_miss_cu
 from grocery_shopper.ingredient import Ingredient
 from grocery_shopper.make_table import make_table, spacing, name_col_num
@@ -33,6 +33,7 @@ def main(num_recipes: int = 0,
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
+    # TODO: Move path to config file <17-03-2024>
     icu_file: str = f'{dir}/res/ingredient_category_url.csv'
 
     # Superlist to store ingredients from all files
@@ -40,10 +41,13 @@ def main(num_recipes: int = 0,
     all_ings_missing_cu: list[Ingredient] = []
     shopping_list_str = []
 
+    # Instanciate closure
+    build_ingredients = read_icu_file(icu_file)
+
     def collect_ingredients_helper(recipe_file):
-        # `valid_ingredients` support `category` and `url`
+        # `valid_ingredients` have `category` and `url`
         # `ings_missing_cu` miss `[c]ategory` and `[u]rl`
-        valid_ingredients, ings_missing_cu = build_ingredients(recipe_file, icu_file)
+        valid_ingredients, ings_missing_cu = build_ingredients(recipe_file)
         all_ings_missing_cu.extend(ings_missing_cu)
         return sorted(valid_ingredients + ings_missing_cu,
                       key=lambda ingredient: ingredient.name)
@@ -51,7 +55,6 @@ def main(num_recipes: int = 0,
     # TODO: As exercise: parallelize reading/parsing the recipe.yaml <05-01-2024>
     for recipe_file in recipes:
         all_ingredients.extend(collect_ingredients_helper(recipe_file))
-    # shopping_list_str.append('\n'.join((f"{ingredient}" for ingredient in all_ingredients)) + '\n' * 3)
     shopping_list_str.append(make_table(all_ingredients) + '\n' * 2)
 
     misc_dir = f'{dir}/misc'
