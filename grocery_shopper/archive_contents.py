@@ -11,8 +11,6 @@ def archive_contents(shopping_list_file: str, recipe_dir: str, recipe_paths: lis
     Save shopping list to yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/yyyy-mm-dd-recipes[0]-...-recipes[n].txt.
     Create hard links of the used recipes next to it to have all resources close at hand.
     """
-    # TODO: Remove following line <31-01-2024>
-    print()
     current_date = datetime.now().strftime('%Y-%m-%d')
     current_year = datetime.now().strftime('%Y')
 
@@ -46,8 +44,6 @@ def archive_contents(shopping_list_file: str, recipe_dir: str, recipe_paths: lis
         logging.error(f'Error while removing link "{link_name}":\n\t{fnfe}')
     os.symlink(f'{subdir_path}', temp_link)
     os.rename(temp_link, link_name)
-    # TODO: Remove following line <31-01-2024>
-    print()
 
 
 if __name__ == "__main__":
