@@ -8,7 +8,7 @@ def query_for_url(ings_miss_cu: list[Ingredient],
     """
     Ask user for URL of every `Ingredient` in `ing_miss_url`, append collected URLs to `icu_file` ([i]ngredient, [c]ategory, [u]rl).
     """
-    icu_entries = ''
+    icu_entries = []
     for ing in ings_miss_cu:
         # Only change `category` if there was a "real" input ("real" == "not empty")
         # Otherwise, `category` keeps the default value set in the constructor
@@ -18,11 +18,11 @@ def query_for_url(ings_miss_cu: list[Ingredient],
         if (u := input(f'URL(s) of "{ing.name}": ')) != '':
             urls = u.split(' ')
             ing.url = random.sample(urls, 1)[0]
-        icu_entries = icu_entries + f'{ing.name},{ing.category},{",".join(urls)}'
+        icu_entries.append(f'{ing.name},{ing.category},{",".join(urls)}')
     # Now, all missing `category` and `url` were completed => append to CSV file
     with open(icu_file, 'a') as f:
         # Remove last '\n' char to have a continuous CSV file
-        f.write(icu_entries.rstrip())
+        f.write('\n'.join(icu_entries))
 
 
 def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
