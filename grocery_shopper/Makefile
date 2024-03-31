@@ -8,7 +8,7 @@ all: run test
 run:
 	grocery-shopper -n 2
 
+# On one line, because every line is executed in it's own subshell
+# ie. every line is stateless
 test:
-	# On one line, because every line is executed in it's own subshell
-	# ie. every line is stateless
 	cd $(git_root_dir) && pytest -rA -s tests/
