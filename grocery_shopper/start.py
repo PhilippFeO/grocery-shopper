@@ -72,9 +72,9 @@ def start():
 
     # Create necessary directories
     # TODO: Pass directories to main? <25-02-2024>
-    recipe_dir = f'{dir}/recipes'
-    res_dir = f'{dir}/res'
-    misc_dir = f'{dir}/misc'
+    recipe_dir = os.path.join(dir, 'recipes')
+    res_dir = os.path.join(dir, 'res')
+    misc_dir = os.path.join(dir, 'misc')
     os.makedirs(recipe_dir, exist_ok=True)
     os.makedirs(res_dir, exist_ok=True)
     os.makedirs(misc_dir, exist_ok=True)

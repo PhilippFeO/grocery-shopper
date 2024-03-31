@@ -19,22 +19,22 @@ def main(num_recipes: int = 0,
     config = read_default_values()
     firefox_profile = config['General']['firefox_profile']
     dir = config['General']['dir']
-    recipe_dir = f'{dir}/recipes'
+    recipe_dir = os.path.join(dir, 'recipes')
 
     # TODO: Move recipe selecting into start.py and let main do the processing <11-03-2024>
     #   Currently I have the following if logic twice, addtionally it is unreadable here.
     if recipe_files and num_recipes > 0:
-        recipes = tuple(f'{dir}/{recipe_file}' for recipe_file in recipe_files) \
+        recipes = tuple(os.path.join(dir, recipe_file) for recipe_file in recipe_files) \
             + select_recipes(num_recipes, recipe_dir)
     elif num_recipes > 0:
         recipes = select_recipes(num_recipes, recipe_dir)
     elif recipe_files:
-        recipes = tuple(f'{dir}/{recipe_file}' for recipe_file in recipe_files)
+        recipes = tuple(os.path.join(dir, recipe_file) for recipe_file in recipe_files)
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
     # TODO: Move path to config file <17-03-2024>
-    icu_file: str = f'{dir}/res/ingredient_category_url.csv'
+    icu_file: str = os.path.join(dir, 'res', 'ingredient_category_url.csv')
 
     # Superlist to store ingredients from all files
     all_ingredients: list[Ingredient] = []
@@ -57,7 +57,7 @@ def main(num_recipes: int = 0,
         all_ingredients.extend(collect_ingredients_helper(recipe_file))
     shopping_list_str.append(make_table(all_ingredients) + '\n' * 2)
 
-    misc_dir = f'{dir}/misc'
+    misc_dir = os.path.join(dir, 'misc')
     # I want to add a destinct heading for each file in misc_dir misc.
     # Iterating over `sys.argv[1:] + misc_files` would only be possibe with various if-statements
     # because the CLI provided files don't get a "filename" heading like `misc_files` do.

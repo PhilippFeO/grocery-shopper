@@ -22,14 +22,11 @@ class Recipe:
 
     def to_latex(self):
         # TODO: Write strings to pipe, read form pipe in latex file <06-02-2024>
-        config = read_default_values()
-        dir = config['General']['dir']
-        res_dir = f'{dir}/res'
         # Recipe title
-        with open('/tmp/title.tex', 'w') as recipe_name_file:
+        with open(os.path.join('/tmp', 'title.tex'), 'w') as recipe_name_file:
             recipe_name_file.write(self.recipe_name)
         # Preparation
-        with open('/tmp/preparation.tex', 'w') as preparation_file:
+        with open(os.path.join('/tmp', 'preparation.tex'), 'w') as preparation_file:
             # Each step starts with '\d{1,2}.\s', ie 3-4 chars
             # TODO: Adjust slice according to above comment <13-02-2024>
             #   Idea: 'preparation' object containing number and instruction separately
@@ -62,7 +59,7 @@ class Recipe:
             ing1_as_field, ing2_as_field = color_ingredient(ing1), color_ingredient(ing2)
             table_row = f'{ing1_as_field} & {ing2_as_field}\\\\\n'
             table_body += table_row
-        with open('/tmp/ingredients.tex', 'w') as ingredients_file:
+        with open(os.path.join('/tmp', 'ingredients.tex'), 'w') as ingredients_file:
             ingredients_file.writelines(table_body)
 
 
@@ -77,15 +74,18 @@ def yaml2pdf(recipe_yamls: list[str], recipe_dir: str, res_dir: str):
         recipe: Recipe = read_recipe(recipe_file)
         recipe.to_latex()
         # Compile recipe before moving to next
-        cp: subprocess.CompletedProcess = subprocess.run(['grocery_shopper/compile_recipe.sh', 'grocery_shopper/template.tex'],
-                                                         # stdout=subprocess.DEVNULL,
-                                                         # stderr=subprocess.DEVNULL
-                                                         )
+        cp: subprocess.CompletedProcess = subprocess.run([
+            os.path.join('grocery_shopper', 'compile_recipe.sh'),
+            os.path.join('grocery_shopper', 'template.tex')],
+            # stdout=subprocess.DEVNULL,
+            # stderr=subprocess.DEVNULL
+        )
         if cp.returncode != 0:
             logging.error(f'Compilation of "{recipe_file}" failed.')
         else:
-            pdf_dir = f'{recipe_dir}/pdf'
+            pdf_dir = os.path.join(recipe_dir, 'pdf')
             if not os.path.isdir(pdf_dir):
                 os.makedirs(pdf_dir, exist_ok=True)
             basename = Path(recipe_file).stem
-            shutil.move(f'{res_dir}/out/template.pdf', f'{pdf_dir}/{basename}.pdf')
+            shutil.move(os.path.join(res_dir, 'out', 'template.pdf'),
+                        os.path.join(pdf_dir, f'{basename}.pdf'))

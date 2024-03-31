@@ -32,7 +32,8 @@ def archive_contents(shopping_list_file: str, recipe_dir: str, recipe_paths: lis
         dst_pdf = os.path.join(subdir_path, (recipe_file_pdf := recipe_file.replace('yaml', 'pdf')))
         try:
             os.link(recipe_path, dst_yaml)
-            os.link(f'{recipe_dir}/pdf/{recipe_file_pdf}', dst_pdf)
+            os.link(os.path.join(recipe_dir, 'pdf', recipe_file_pdf),
+                    dst_pdf)
         except FileExistsError as fee:
             logging.error(f'Error Message: {fee}')
 
