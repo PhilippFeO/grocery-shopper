@@ -33,41 +33,30 @@ def read_icu_file(icu_file: str) -> Callable[str, tuple[list[Ingredient], list[I
             recipe_data = yaml.safe_load(file)
         recipe_name = recipe_data.get('recipe', [])[0]['name']
 
-        recipe_ingredients: list[Ingredient] = []
+        ings_with_cu: list[Ingredient] = []
         # User will be asked to provide `[c]ategory` and `[u]rl`
         ings_missing_cu: list[Ingredient] = []
         # Build ingredients
         # get() returns list of dicts resembling an ingredient as defined in the corresponding yaml file
-        for name_quantity in recipe_data.get("ingredients", []):
+        for name_quantity_optional in recipe_data.get("ingredients", []):
             # Retrive information from CSV files ('category', 'url')
             # Check for 'KeyError' in all CSV files
             try:
                 # If URL is missing, it will be added later by the user
                 category = icu_dict[
-                    (ingredient_name := name_quantity['name'])
+                    (ingredient_name := name_quantity_optional['name'])
                 ][0]
                 urls = icu_dict[ingredient_name][1]
             except KeyError:
                 logging.info(f'Ingredient "{ingredient_name}" missing in "{icu_file}". Default value for <category> will be used.')
                 ings_missing_cu.append(
-                    Ingredient(**name_quantity,
+                    Ingredient(**name_quantity_optional,
                                meal=recipe_name))
                 continue
-            recipe_ingredients.append(
-                Ingredient(**name_quantity,
+            ings_with_cu.append(
+                Ingredient(**name_quantity_optional,
                            category=category,
                            urls=urls,
                            meal=recipe_name))
-        return recipe_ingredients, ings_missing_cu
+        return ings_with_cu, ings_missing_cu
     return build_ingredients_inner
-
-
-if __name__ == "__main__":
-    file_path = "recipes/Testgericht.yaml"
-    # i=ingredient, c=category, u=url
-    icu_file = 'res/ingredient_category_url.csv'
-    aicu_dict: dict[str, tuple[str, str]] = read_csv(icu_file)
-    ingredients = read_icu_file(file_path, aicu_dict)
-
-    for i in ingredients:
-        print(i)
