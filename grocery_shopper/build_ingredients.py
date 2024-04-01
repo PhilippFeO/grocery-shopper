@@ -46,7 +46,7 @@ def read_icu_file(icu_file: str) -> Callable[str, tuple[list[Ingredient], list[I
                 category = icu_dict[
                     (ingredient_name := name_quantity['name'])
                 ][0]
-                url = icu_dict[ingredient_name][1]
+                urls = icu_dict[ingredient_name][1]
             except KeyError:
                 logging.info(f'Ingredient "{ingredient_name}" missing in "{icu_file}". Default value for <category> will be used.')
                 ings_missing_cu.append(
@@ -56,7 +56,7 @@ def read_icu_file(icu_file: str) -> Callable[str, tuple[list[Ingredient], list[I
             recipe_ingredients.append(
                 Ingredient(**name_quantity,
                            category=category,
-                           url=url,
+                           urls=urls,
                            meal=recipe_name))
         return recipe_ingredients, ings_missing_cu
     return build_ingredients_inner

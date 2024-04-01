@@ -26,7 +26,7 @@ def make_table(ingredients: list[Ingredient], with_url: bool = False) -> str:
         row_names.append('Verweis')
         # index 0 is `header`
         for row, ing in zip(data[1:], ingredients):
-            row.append(ing.url)
+            row.append(ing.selected_url)
 
     # Calculate the width of each column
     column_widths = [max(len(item) for item in col) for col in zip(*data)]

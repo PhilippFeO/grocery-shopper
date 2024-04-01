@@ -16,9 +16,8 @@ def query_for_url(ings_miss_cu: list[Ingredient],
             ing.category = c
         # Same with url
         if (u := input(f'URL(s) of "{ing.name}": ')) != '':
-            urls = u.split(' ')
-            ing.url = random.sample(urls, 1)[0]
-        icu_entries.append(f'{ing.name},{ing.category},{",".join(urls)}')
+            ing.urls = u.split(' ')
+        icu_entries.append(f'{ing.name},{ing.category},{",".join(ing.urls)}')
     # Now, all missing `category` and `url` were completed => append to CSV file
     with open(icu_file, 'a') as f:
         # Remove last '\n' char to have a continuous CSV file
@@ -47,5 +46,10 @@ def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
             query_for_url(intersection,
                           icu_file)
     # `final_ingredients` shares `Ingerdient`s from `valid_ingredients` and `ings_miss_cu` (s. `main.py`), since we are dealing with objects, **references** were passed around.
-    urls = tuple(ing.url for ing in final_ingredients)
+    urls = []
+    for ing in final_ingredients:
+        # Randomly select URL to have some variation
+        # url = random.sample(urls, 1)[0]
+        ing.selected_url = random.sample(ing.urls, 1)[0]
+        urls.append(ing.selected_url)
     return urls

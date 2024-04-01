@@ -13,9 +13,7 @@ def read_csv(file_path: str) -> dict[str, tuple[str, str]]:
 
         for row in csv_reader:
             ingredient, category, *urls = row
-            # Randomly select URL to have some variation
-            url = random.sample(urls, 1)[0]
-            csv_dict[ingredient] = (category, url)
+            csv_dict[ingredient] = (category, urls)
 
     return csv_dict
 
