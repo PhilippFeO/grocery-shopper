@@ -21,6 +21,10 @@ class Ingredient:
                 # self.url == other.url and
                 self.meal == other.meal)
 
+    def __hash__(self):
+        """Necessary for tests, especially for the use of collections.Counter()"""
+        return hash((self.name, self.quantity, self.optional, self.category, self.meal))
+
     def __repr__(self) -> str:
         return f'Ingredient(name={self.name}, quantity={self.quantity}, optional={self.optional}, category={self.category}, url={self.url}, meal={self.meal})'
 
