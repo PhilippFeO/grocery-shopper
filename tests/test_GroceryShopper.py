@@ -14,7 +14,7 @@ def filter_names(ingredients: list[Ingredient], names: set[str]) -> list[Ingredi
 
 
 def test_query_for_url(monkeypatch, tmp_path, ings_missing_cu):
-    inputs = [(cat0 := 'Category 0'), (url0 := 'URL-2'),
+    inputs = [(cat0 := 'Category 0'), (url0 := 'URL-0'),
               (cat1 := 'Category 1'), (url1 := 'URL-1.1 URL-1.2'),
               (cat2 := 'Category 2'), (url2 := 'URL-2')]
     monkeypatch.setattr('builtins.input', lambda _: inputs.pop(0))
@@ -28,6 +28,7 @@ def test_query_for_url(monkeypatch, tmp_path, ings_missing_cu):
     ing1 = f'{ings_missing_cu[1].name},{cat1},{url1.replace(" ", ",")}'
     ing2 = f'{ings_missing_cu[2].name},{cat2},{url2}'
     expected_contents = '\n'.join((ing0, ing1, ing2))
+
     assert tmp_icu_file.read_text() == expected_contents
 
 
