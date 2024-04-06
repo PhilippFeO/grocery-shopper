@@ -1,4 +1,13 @@
-?   Name       Menge   Kategorie      Gericht
--------------------------------------------------------------------------------
-•   Orange     2       N/A-CATEGORY   Testgericht für build_ingredients_test.py
-•   Kirsche    16      Obst           Testgericht für build_ingredients_test.py
+?   Name        Menge   Kategorie      Gericht
+--------------------------------------------------
+•   Orange      2       N/A-CATEGORY   Testgericht
+•   Erdbeere    5       N/A-CATEGORY   Testgericht
+•   Kirsche     16      Obst           Testgericht
+1   Paprika     1       Gemüse         Testgericht
+
+
+Weiteres:
+?   Name        Menge   Kategorie      Gericht
+--------------------------------------------------
+•   Kürbis      500g    N/A-CATEGORY   misc-test
+1   Brombeere   150g    Gemüse         misc-test
