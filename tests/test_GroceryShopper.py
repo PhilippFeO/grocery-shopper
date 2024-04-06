@@ -5,8 +5,10 @@ from grocery_shopper.parse_edited_list import parse_edited_list
 import os
 from collections import Counter
 
-
-icu_file = os.path.join('tests', 'test_ingredient_category_url.csv')
+shopping_list_file: str = os.path.join('tests',
+                                       'shopping_list_test.txt')
+icu_file: str = os.path.join('tests',
+                             'test_ingredient_category_url.csv')
 
 
 def filter_names(ingredients: list[Ingredient], names: set[str]) -> list[Ingredient]:
@@ -48,8 +50,6 @@ def test_parse_edited_list(all_ingredients):
     # from grocery_shopper.make_table import make_table
     # table: str = make_table(all_ingredients)
     # print(table)
-    shopping_list_file: str = os.path.join('tests', 'shopping_list_test.txt')
-
     expected_final_ingredients: list[Ingredient] = filter_names(all_ingredients, {"Orange", "Erdbeere", "Kirsche", "Paprika", "Kürbis", "Brombeere"})
 
     final_ingredients: list[Ingredient] = parse_edited_list(shopping_list_file, all_ingredients)
