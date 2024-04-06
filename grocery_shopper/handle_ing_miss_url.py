@@ -3,7 +3,8 @@ from typing import Generator
 from grocery_shopper.ingredient import Ingredient
 
 
-def query_for_url(ings_miss_cu: list[Ingredient],
+# TODO: Set datatype of 'ings_miss_cu' to 'Iterable' <06-04-2024>
+def query_for_url(ings_miss_cu,
                   icu_file: str):
     """
     Ask user for URL of every `Ingredient` in `ing_miss_url`, append collected URLs to `icu_file` ([i]ngredient, [c]ategory, [u]rl).
