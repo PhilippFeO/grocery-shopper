@@ -106,7 +106,7 @@ def main(num_recipes: int = 0,
                              with_url=True))
 
     # Archive shopping list and recipes
-    archive_contents(shopping_list_file, recipe_dir, recipes)
+    _ = archive_contents(shopping_list_file, recipe_dir, recipes)
 
     # Open firefox with specific profile
     # subpress warnings
