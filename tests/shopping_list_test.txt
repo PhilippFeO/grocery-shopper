@@ -1,0 +1,4 @@
+?   Name       Menge   Kategorie      Gericht
+-------------------------------------------------------------------------------
+•   Orange     2       N/A-CATEGORY   Testgericht für build_ingredients_test.py
+•   Kirsche    16      Obst           Testgericht für build_ingredients_test.py

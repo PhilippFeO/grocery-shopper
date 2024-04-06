@@ -1,6 +1,7 @@
 from grocery_shopper.build_ingredients import read_icu_file
 from grocery_shopper.ingredient import Ingredient
 from grocery_shopper.handle_ing_miss_url import query_for_url
+from grocery_shopper.parse_edited_list import parse_edited_list
 import os
 import pytest
 from collections import Counter
@@ -31,7 +32,7 @@ class TestGroceryShopper():
                                  category='Gemüse',
                                  url=['https://de.wikipedia.org/wiki/Paprika'],
                                  meal='Testgericht für build_ingredients_test.py')
-        return [ing_paprika, ing_kirsche]
+        return [ing_kirsche, ing_paprika]
 
     def test_query_for_url(self, monkeypatch, tmp_path, ings_missing_cu):
         inputs = [(cat1 := 'Category 1'), (url1 := 'URL-1'),
@@ -53,3 +54,19 @@ class TestGroceryShopper():
 
         assert Counter(ings_missing_cu) == Counter(ings_missing_cu_built)
         assert Counter(ings_with_cu) == Counter(ings_with_cu_built)
+
+    def test_parse_edited_list(self, ings_missing_cu, ings_with_cu):
+        # from grocery_shopper.make_table import make_table
+        # table: str = make_table([*ings_missing_cu, *ings_with_cu])
+        # print(table)
+        kirsche, paprika = ings_with_cu
+        orange, erdbeere = ings_missing_cu
+
+        all_ingredients: list[Ingredient] = [kirsche, paprika, orange, erdbeere]
+        shopping_list_file: str = os.path.join('tests', 'shopping_list_test.txt')
+
+        expected_final_ingredients: list[Ingredient] = [kirsche, orange]
+
+        final_ingredients: list[Ingredient] = parse_edited_list(shopping_list_file, all_ingredients)
+
+        assert Counter(expected_final_ingredients) == Counter(final_ingredients)
