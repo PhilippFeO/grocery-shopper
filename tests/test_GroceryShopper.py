@@ -29,7 +29,7 @@ class TestGroceryShopper():
                                  1,
                                  optional=True,
                                  category='Gemüse',
-                                 url=['https://de.wikipedia.org/wiki/Paprika', 'https://de.wikipedia.org/wiki/Nachtschattengew%C3%A4chse'],
+                                 url=['https://de.wikipedia.org/wiki/Paprika'],
                                  meal='Testgericht für build_ingredients_test.py')
         return [ing_paprika, ing_kirsche]
 
