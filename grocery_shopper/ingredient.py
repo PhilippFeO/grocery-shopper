@@ -18,7 +18,6 @@ class Ingredient:
                 self.quantity == other.quantity and
                 self.optional == other.optional and
                 self.category == other.category and
-                # self.url == other.url and
                 self.meal == other.meal)
 
     def __hash__(self):
@@ -26,10 +25,7 @@ class Ingredient:
         return hash((self.name, self.quantity, self.optional, self.category, self.meal))
 
     def __repr__(self) -> str:
-        return f'Ingredient(name={self.name}, quantity={self.quantity}, optional={self.optional}, category={self.category}, url={self.url}, meal={self.meal})'
-
-    # def __repr__(self) -> str:
-    #     return self.name
+        return f'Ingredient(name={self.name},\nquantity={self.quantity},\noptional={self.optional},\ncategory={self.category},\nurl={self.url},\nmeal={self.meal})'
 
 
 # # `Card = collections.namedtuple('Card', ['rank', 'suit'])`
