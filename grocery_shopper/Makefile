@@ -3,9 +3,13 @@ git_root_dir := $(shell git rev-parse --show-toplevel)
 
 .PHONY: all run test vtest install mdl
 
+all: install
 
 install:
 	pip install -e $(git_root_dir) 
+
+run: install
+	grocery_shopper -n 2
 
 # mdl = Mandeln
 mdl: install
