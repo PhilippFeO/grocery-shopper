@@ -77,11 +77,6 @@ ingredients:
 - `--take`: By `--take recipe_1.yaml ...` you circumvent randomly selecting by providing the recipes you want to cook directly. Can be used with `-n`/`--num-recipes` in conjunction.
 
 
-## Roadmap
-- [ ] Rename `res/` in `.resources/`.
-- [ ] Make Firefox profile optional, use `--window` as default.
-
-
 ## Syntax completion for Neovim
 - I have written a source for Neovim, ie. [nvim-cmp](https://github.com/hrsh7th/nvim-cmp), which completes the ingredients. You can find it in my Repos or [here](https://github.com/PhilippFeO/cmp-csv). Having syntax completion provides you from typos, duplication and remembering which `Ingredient` is already with URL available.
 
