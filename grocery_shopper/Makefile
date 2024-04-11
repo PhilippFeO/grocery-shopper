@@ -1,12 +1,15 @@
 # Execute all, especially Tests in the root dir of git repo
 git_root_dir := $(shell git rev-parse --show-toplevel) 
 
-.PHONY: all run test vtest
+.PHONY: all run test vtest install mdl
 
-all: run test
 
-run:
-	grocery-shopper -n 2
+install:
+	pip install -e $(git_root_dir) 
+
+# mdl = Mandeln
+mdl: install
+	grocery_shopper --take ~/Documents/Kochen/recipes/Ricotta-Pasta_mit_Mandeln.yaml
 
 # On one line, because every line is executed in it's own subshell
 # ie. every line is stateless
