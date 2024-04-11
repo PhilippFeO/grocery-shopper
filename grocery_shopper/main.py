@@ -111,7 +111,6 @@ def main(num_recipes: int = 0,
     # Open firefox with specific profile
     # subpress warnings
     firefox = f"firefox --profile {firefox_profile}"
-    # subprocess.run([editor, shopping_list_file])
     subprocess.run([*firefox.split(' '), *urls], stderr=subprocess.DEVNULL)
 
     print('\n\nEnjoy your meals and saved time! :)')
