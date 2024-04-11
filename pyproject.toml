@@ -3,13 +3,13 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "grocery-shopper"
-version = "1.0"
-dependencies = [
-    'PyYAML'
-]
+name = "grocery_shopper"
+version = "0.0.17"
+# dependencies = [
+#     'PyYAML'
+# ]
 authors = [
-    { name = "PhilippFeO", email="125358469+PhilippFeO@users.noreply.github.com"}
+    { name = "PFeO", email="125358469+PhilippFeO@users.noreply.github.com"}
 ]
 description = "Let the computer choose your dishes and also shop the ingredients – automagically!"
 readme = "README.md"
@@ -25,7 +25,6 @@ Homepage = "https://github.com/PhilippFeO/grocery-shopper"
 Issues = "https://github.com/PhilippFeO/grocery-shopper/issues"
 
 [tool.setuptools.packages.find]
-include = ["grocery-shopper*"]
 exclude = [
     ".git",
     ".mypy_cache",
@@ -35,8 +34,7 @@ exclude = [
     "dist",
     "grocery_shopper.egg-info",
     "hooks",
-    "tests",
 ]
 
 [project.scripts]
-grocery-shopper = "grocery_shopper.start:start"
+grocery_shopper = "grocery_shopper.start:start"
