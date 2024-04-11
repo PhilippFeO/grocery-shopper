@@ -6,7 +6,7 @@ from grocery_shopper.archive_contents import archive_contents
 from grocery_shopper.build_ingredients import read_icu_file
 from grocery_shopper.handle_ing_miss_url import handle_ing_miss_cu
 from grocery_shopper.ingredient import Ingredient
-from grocery_shopper.make_table import make_table, spacing, name_col_num
+from grocery_shopper.make_table import make_table
 from grocery_shopper.read_default_values import read_default_values
 from grocery_shopper.select_recipes import select_recipes
 from grocery_shopper.parse_edited_list import parse_edited_list
