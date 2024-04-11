@@ -10,7 +10,7 @@ def test_create_archive_dir(tmp_path):
 
 
 def test_copy_shopping_list(tmp_path):
-    recipe_paths: list[str] = [f"tests/{recipe_yaml}" for recipe_yaml in {"Testgericht_0.yaml", "Testgericht_1.yaml"}]
+    recipe_paths: tuple[str] = (f"tests/{recipe_yaml}" for recipe_yaml in {"Testgericht_0.yaml", "Testgericht_1.yaml"})
     archive_dir: str = create_archive_dir(recipe_paths, str(tmp_path))
     archived_shopping_list: str = copy_shopping_list(shopping_list_file,
                                                      archive_dir)
@@ -29,8 +29,8 @@ def test_archive_contents(tmp_path):
     """
     Test function for archive_contents()
     """
-    recipe_paths: list[str] = [
-        f"/localhome/rost_ph/proj/grocery-shopper/tests/{recipe_yaml}" for recipe_yaml in ("Testgericht_0.yaml", "Testgericht_1.yaml")]
+    recipe_paths: tuple[str] = (
+        f"/localhome/rost_ph/proj/grocery-shopper/tests/{recipe_yaml}" for recipe_yaml in ("Testgericht_0.yaml", "Testgericht_1.yaml"))
     symlinked_files = archive_contents(shopping_list_file, str(tmp_path), recipe_paths)
 
     # Check if symlinks were created

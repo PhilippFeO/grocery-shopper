@@ -1,0 +1,15 @@
+recipe:
+  - name: Testgericht
+ingredients:
+  - name: Orange
+    quantity: 2
+  - name: Kirsche
+    quantity: 16
+  - name: Paprika
+    quantity: 1
+    optional: true
+  - name: Erdbeere
+    quantity: 5
+preparation:
+  - 1. Lorem
+  - 2. Ipsum

@@ -23,7 +23,7 @@ def ings_with_cu():
                          1,
                          optional=True,
                          category='Gemüse',
-                         url=['https://de.wikipedia.org/wiki/Paprika'],
+                         url='https://de.wikipedia.org/wiki/Paprika',
                          meal='Testgericht')
     gurke = Ingredient('Gurke',
                        2,
