@@ -2,23 +2,26 @@
 
 
 class Ingredient:
-    def __init__(self, name, quantity, optional=False,
-                 category='N/A-CATEGORY',
-                 url='N/A-URL',
-                 meal='N/A-MEAL'):
-        self.name = name
-        self.quantity = str(quantity)  # may have one of the following form: 2 (pieces), 250g, 1 Block => string necessary
-        self.optional = optional
+    def __init__(self, name: str, quantity: int | float | str, optional: bool=False,
+                 category: str='N/A-CATEGORY',
+                 url: str='N/A-URL',
+                 meal: str='N/A-MEAL'):
+        self.name: str = name
+        self.quantity: str = str(quantity)  # may have one of the following form: 2 (pieces), 250g, 1 Block => string necessary
+        self.optional: str = optional
         self.category = category
         self.url = url
         self.meal = meal
 
     def __eq__(self, other) -> bool:
-        return (self.name == other.name and
-                self.quantity == other.quantity and
-                self.optional == other.optional and
-                self.category == other.category and
-                self.meal == other.meal)
+        if isinstance(other, Ingredient):
+            return (self.name == other.name and
+                    self.quantity == other.quantity and
+                    self.optional == other.optional and
+                    self.category == other.category and
+                    self.meal == other.meal)
+        else:
+            return False
 
     def __hash__(self):
         """Necessary for tests, especially for the use of collections.Counter()"""
