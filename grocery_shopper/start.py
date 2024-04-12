@@ -6,7 +6,8 @@ import sys
 from grocery_shopper import main
 from grocery_shopper.setup_dirs import setup_dirs
 from grocery_shopper import yaml2pdf
-from grocery_shopper.vars import defaults_file
+from grocery_shopper.vars import defaults_file, recipe_dir_name, misc_dir_name, resource_dir_name
+from grocery_shopper.select_recipes import select_recipes
 
 
 logging.basicConfig(level=logging.WARNING,
@@ -58,20 +59,30 @@ def start():
         config['General'][key_firefox_profile] = os.path.expanduser(args.firefox_profile)
 
     recipe_dir, misc_dir, resource_dir = setup_dirs(config)
+    directories = {recipe_dir_name: recipe_dir,
+                   misc_dir_name: misc_dir,
+                   resource_dir_name: resource_dir}
 
     # Write default values
     with open(defaults_file_path, 'w') as f:
         config.write(f)
 
-    # Abfahrt
-    if args.take and args.num_recipes:
-        main.main(num_recipes=args.num_recipes, recipe_files=args.take)
-    elif args.num_recipes:
-        main.main(num_recipes=args.num_recipes)
+    # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024> 
+    #   ...without type checker complains...
+    recipes = tuple()
+    if args.take and args.num_recipes > 0:
+        recipes = tuple(os.path.join(recipe_dir, recipe_file) for recipe_file in args.take) \
+            + tuple(select_recipes(args.num_recipes, recipe_dir))
+    elif args.num_recipes > 0:
+        recipes = tuple(select_recipes(args.num_recipes, recipe_dir))
     elif args.take:
-        main.main(recipe_files=args.take)
+        recipes = tuple(os.path.join(recipe_dir, recipe_file) for recipe_file in args.take)
     elif args.make_pdf:
         yaml2pdf.yaml2pdf(args.make_pdf, recipe_dir, resource_dir)
+
+    # Abfahrt
+    assert len(recipes) > 0
+    main.main(recipes, directories)
 
 
 if __name__ == "__main__":

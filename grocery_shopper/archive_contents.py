@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 import os
 import shutil
 import logging
@@ -49,7 +50,7 @@ def create_convenience_symlink(archive_dir_path: str):
     os.rename(temp_link, link_name)
 
 
-def archive_contents(shopping_list_file: str, archive_location: str, recipe_paths: list[str]) -> list[str]:
+def archive_contents(shopping_list_file: str, archive_location: str, recipe_paths: Iterable[str]) -> list[str]:
     """
     Save shopping list to yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/yyyy-mm-dd-recipes[0]-...-recipes[n].txt.
     Create sym links of the used recipes next to it to have all resources close at hand.
@@ -90,8 +91,3 @@ def archive_contents(shopping_list_file: str, archive_location: str, recipe_path
             logging.error(f'Error Message: {fee}')
 
     return symlinked_files
-
-
-if __name__ == "__main__":
-    lines = ["Line 1", "Line 2", "Line 3"]
-    archive_contents(lines, "recipes/Pesto_alla_Trapanese.yaml", "recipes/Rührei.yaml")

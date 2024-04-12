@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 import os
 import glob
 import sys
@@ -6,7 +7,7 @@ import logging
 from pathlib import Path
 
 
-def select_recipes(num_recipes, recipe_dir) -> list[str]:
+def select_recipes(num_recipes, recipe_dir) -> Iterable[str]:
     """Randomly selects submitted number of recipes.
 
     :param int num_recipes: Number of recipes

@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 import glob
 import os
 import subprocess
@@ -8,12 +9,11 @@ from grocery_shopper.handle_ing_miss_url import handle_ing_miss_cu
 from grocery_shopper.ingredient import Ingredient
 from grocery_shopper.make_table import make_table
 from grocery_shopper.read_default_values import read_default_values
-from grocery_shopper.select_recipes import select_recipes
 from grocery_shopper.parse_edited_list import parse_edited_list
 
 
-def main(num_recipes: int = 0,
-         recipe_files: list[str] = None):
+def main(recipes: Iterable[str],
+         directories: dict[str, str]):
     """
     Conducts shopping process. Either callable with number of recipes to randomly select some or with list of recipes.
     """
@@ -22,15 +22,6 @@ def main(num_recipes: int = 0,
     dir = config['General']['dir']
     recipe_dir = os.path.join(dir, 'recipes')
 
-    # TODO: Move recipe selecting into start.py and let main do the processing <11-03-2024>
-    #   Currently I have the following if logic twice, addtionally it is unreadable here.
-    if recipe_files and num_recipes > 0:
-        recipes = tuple(os.path.join(dir, recipe_file) for recipe_file in recipe_files) \
-            + select_recipes(num_recipes, recipe_dir)
-    elif num_recipes > 0:
-        recipes = select_recipes(num_recipes, recipe_dir)
-    elif recipe_files:
-        recipes = tuple(os.path.join(dir, recipe_file) for recipe_file in recipe_files)
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
@@ -106,7 +97,8 @@ def main(num_recipes: int = 0,
                              with_url=True))
 
     # Archive shopping list and recipes
-    _ = archive_contents(shopping_list_file, recipe_dir, recipes)
+    # Return values is mainly for unit testing
+    _ = archive_contents(shopping_list_file, directories['recipes'], recipes)
 
     # Open firefox with specific profile
     # subpress warnings
@@ -114,7 +106,3 @@ def main(num_recipes: int = 0,
     subprocess.run([*firefox.split(' '), *urls], stderr=subprocess.DEVNULL)
 
     print('\n\nEnjoy your meals and saved time! :)')
-
-
-if __name__ == "__main__":
-    main()
