@@ -1,8 +1,11 @@
 from grocery_shopper.build_ingredients import read_icu_file
 from grocery_shopper.ingredient import Ingredient
 from grocery_shopper.handle_ing_miss_url import query_for_url
+from grocery_shopper.setup_dirs import setup_dirs
 from grocery_shopper.parse_edited_list import parse_edited_list
+from grocery_shopper.vars import recipe_dir_name, misc_dir_name, resource_dir_name
 import os
+import pytest
 from collections import Counter
 
 shopping_list_file: str = os.path.join('tests',
@@ -55,3 +58,28 @@ def test_parse_edited_list(all_ingredients):
     final_ingredients: list[Ingredient] = parse_edited_list(shopping_list_file, all_ingredients)
 
     assert Counter(expected_final_ingredients) == Counter(final_ingredients)
+
+
+def test_setup_dirs(tmp_path):
+    recipe_dir, misc_dir, resource_dir = setup_dirs(tmp_path)
+
+    # expected_recipe_dir = tmp_path / resource_dir_name
+    # expected_misc_dir =tmp_path /  misc_dir_name
+    # expected_resource_dir =tmp_path /  resource_dir_name
+    assert os.path.isdir(os.path.join(tmp_path, recipe_dir )) 
+    assert os.path.isdir(os.path.join(tmp_path, misc_dir))
+    assert os.path.isdir(os.path.join(tmp_path, resource_dir))
+    
+@pytest.mark.parametrize("dir_name", [recipe_dir_name, misc_dir_name, resource_dir_name])
+# @pytest.mark.parametrize("dir_name", [recipe_dir_name])#, misc_dir_name, resource_dir_name])
+def test_setup_dirs_one_exists(tmp_path, dir_name):
+    """Test setup_dirs() in case on directory already exists.
+
+    :tmp_path: Path where directories were created
+    :dir: One of `recipe/`, `misc/`, `res/`
+    """
+    os.mkdir(tmp_path / dir_name)
+    with pytest.raises(SystemExit) as e:
+        _, _, _ = setup_dirs(tmp_path)
+    assert e.type == SystemExit
+    assert e.value.code == 1
