@@ -71,12 +71,11 @@ def test_setup_dirs(tmp_path):
     assert os.path.isdir(os.path.join(tmp_path, resource_dir))
     
 @pytest.mark.parametrize("dir_name", [recipe_dir_name, misc_dir_name, resource_dir_name])
-# @pytest.mark.parametrize("dir_name", [recipe_dir_name])#, misc_dir_name, resource_dir_name])
 def test_setup_dirs_one_exists(tmp_path, dir_name):
     """Test setup_dirs() in case on directory already exists.
 
     :tmp_path: Path where directories were created
-    :dir: One of `recipe/`, `misc/`, `res/`
+    :dir_name: One of `recipe/`, `misc/`, `res/`
     """
     os.mkdir(tmp_path / dir_name)
     with pytest.raises(SystemExit) as e:
