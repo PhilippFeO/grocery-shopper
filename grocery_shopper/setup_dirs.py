@@ -4,7 +4,7 @@ import logging
 from grocery_shopper.vars import recipe_dir_name, misc_dir_name, resource_dir_name
 
 
-def setup_dirs(path: str) -> tuple[str, str, str]:
+def setup_dirs_helper(path: str) -> tuple[str, str, str]:
     recipe_dir = os.path.join(path, recipe_dir_name)
     misc_dir = os.path.join(path,misc_dir_name)
     res_dir = os.path.join(path, resource_dir_name)
@@ -18,3 +18,13 @@ def setup_dirs(path: str) -> tuple[str, str, str]:
         sys.exit(1)
 
     return recipe_dir, misc_dir, res_dir
+
+def setup_dirs(arg1):
+    """TODO: Docstring for setup_dirs.
+
+    :arg1: TODO
+    :returns: TODO
+
+    """
+    pass
+    
