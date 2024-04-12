@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 from grocery_shopper import main
-from grocery_shopper.setup_dirs import setup_dirs
+from grocery_shopper.setup_dirs import setup_dirs, setup_dirs_helper
 from grocery_shopper import yaml2pdf
 from grocery_shopper.vars import defaults_file,recipe_dir_name, misc_dir_name, resource_dir_name
 
@@ -67,27 +67,11 @@ def start():
     _ = helper(key_firefox_profile, args.firefox_profile, config,
                'No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
 
-    # Check if directory was already set, ie program was ran at least once
-    key_dir = 'dir'
-    try:
-        dir = config['General'][key_dir]
-        recipe_dir = os.path.join(dir, recipe_dir_name )
-        misc_dir = os.path.join(dir, misc_dir_name )
-        res_dir = os.path.join(dir, resource_dir_name )
-    # If not (probably on first run), then set it to CWD
-    # Except block entered on first run => directories don't exists
-    except (configparser.NoSectionError, configparser.NoOptionError, KeyError):
-        dir = os.getcwd()
-        # Call to setup_dirs() has to come before setting config
-        # The function might exit, then no values should be written to config
-        recipe_dir, _, res_dir = setup_dirs(dir)
-        config['General'][key_dir] = os.path.expanduser(dir)
+    recipe_dir, misc_dir, resource_dir = setup_dirs(config)
 
     # Write default values
     with open(defaults_file_path, 'w') as f:
         config.write(f)
-
-    # recipe_dir, _, res_dir = setup_dirs(dir)
 
     # Abfahrt
     if args.take and args.num_recipes:
@@ -97,7 +81,7 @@ def start():
     elif args.take:
         main.main(recipe_files=args.take)
     elif args.make_pdf:
-        yaml2pdf.yaml2pdf(args.make_pdf, recipe_dir, res_dir)
+        yaml2pdf.yaml2pdf(args.make_pdf, recipe_dir, resource_dir)
 
 
 if __name__ == "__main__":
