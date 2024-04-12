@@ -20,3 +20,4 @@ misc/
 build/
 grocery_shopper.egg-info/
 *.vim
+dist/
