@@ -61,14 +61,10 @@ def test_parse_edited_list(all_ingredients):
 
 
 def test_setup_dirs(tmp_path):
-    recipe_dir, misc_dir, resource_dir = setup_dirs(tmp_path)
-
-    # expected_recipe_dir = tmp_path / resource_dir_name
-    # expected_misc_dir =tmp_path /  misc_dir_name
-    # expected_resource_dir =tmp_path /  resource_dir_name
-    assert os.path.isdir(os.path.join(tmp_path, recipe_dir )) 
-    assert os.path.isdir(os.path.join(tmp_path, misc_dir))
-    assert os.path.isdir(os.path.join(tmp_path, resource_dir))
+    _, _, _ = setup_dirs(tmp_path)
+    assert os.path.isdir(tmp_path / resource_dir_name) 
+    assert os.path.isdir(tmp_path / misc_dir_name)
+    assert os.path.isdir(tmp_path / resource_dir_name)
     
 @pytest.mark.parametrize("dir_name", [recipe_dir_name, misc_dir_name, resource_dir_name])
 def test_setup_dirs_one_exists(tmp_path, dir_name):
