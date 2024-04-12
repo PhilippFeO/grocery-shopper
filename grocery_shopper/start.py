@@ -4,9 +4,9 @@ import logging
 import os
 import sys
 from grocery_shopper import main
-from grocery_shopper.setup_dirs import setup_dirs, setup_dirs_helper
+from grocery_shopper.setup_dirs import setup_dirs
 from grocery_shopper import yaml2pdf
-from grocery_shopper.vars import defaults_file,recipe_dir_name, misc_dir_name, resource_dir_name
+from grocery_shopper.vars import defaults_file
 
 
 logging.basicConfig(level=logging.WARNING,
@@ -14,28 +14,12 @@ logging.basicConfig(level=logging.WARNING,
                     datefmt=' %H:%M:%S')
 
 
-def helper(key_config, arg_value, config, own_err_msg):
-    """
-    Retrieve default values from config file or user input and write it to config file in the latter case.
-    """
-    value = arg_value
-    if value is None:
-        try:
-            value = config['General'][key_config]
-        except (configparser.NoSectionError, configparser.NoOptionError, KeyError):
-            logging.error(own_err_msg)
-            sys.exit(1)
-    else:
-        config['General'][key_config] = os.path.expanduser(value)
-    return value
-
-
 def start():
     grocery_shopper_dir = os.path.dirname(__file__)
     defaults_file_path = f'{grocery_shopper_dir}/{defaults_file}'
     config = configparser.ConfigParser()
     try:
-        # According to Doc: Use read_file() when file is expected to assist
+        # According to Doc: Use read_file() when file is expected to exists
         config.read_file(open(defaults_file_path))
     except FileNotFoundError:
         config['General'] = {}
@@ -62,10 +46,16 @@ def start():
                    type=str)
     args = p.parse_args()
 
-    # dir = helper(key_dir, args.dir, config, 'No default recipe directory set. Please use\n\t--dir DIRECTORY\nif it\'s your first run.')
+    # Check config for firefox profile
     key_firefox_profile = 'firefox_profile'
-    _ = helper(key_firefox_profile, args.firefox_profile, config,
-               'No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
+    if args.firefox_profile is None:
+        try:
+            config['General'][key_firefox_profile]
+        except (configparser.NoSectionError, configparser.NoOptionError, KeyError):
+            logging.error('No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
+            sys.exit(1)
+    else:
+        config['General'][key_firefox_profile] = os.path.expanduser(args.firefox_profile)
 
     recipe_dir, misc_dir, resource_dir = setup_dirs(config)
 
