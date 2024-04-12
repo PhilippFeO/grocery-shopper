@@ -10,10 +10,9 @@ def test_create_archive_dir(tmp_path):
 
 
 def test_copy_shopping_list(tmp_path):
-    recipe_paths: tuple[str] = (f"tests/{recipe_yaml}" for recipe_yaml in {"Testgericht_0.yaml", "Testgericht_1.yaml"})
+    recipe_paths = (f"tests/{recipe_yaml}" for recipe_yaml in ("Testgericht_0.yaml", "Testgericht_1.yaml"))
     archive_dir: str = create_archive_dir(recipe_paths, str(tmp_path))
-    archived_shopping_list: str = copy_shopping_list(shopping_list_file,
-                                                     archive_dir)
+    archived_shopping_list: str = copy_shopping_list(shopping_list_file, archive_dir)
     assert os.path.isfile(archived_shopping_list)
 
 
