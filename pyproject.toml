@@ -4,7 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "grocery_shopper"
-version = "0.0.17"
+# First digit for pypi.org
+# Second digit for test.pypi.org
+version = "0.2.0"
 # dependencies = [
 #     'PyYAML'
 # ]
