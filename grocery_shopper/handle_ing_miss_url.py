@@ -43,7 +43,7 @@ def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
         while (user_input := input("yes/no: ").lower()) not in {'yes', 'y', 'no', 'n'}:
             print("Invalid input. Please enter 'yes' or 'no'.")
         if user_input in {'yes', 'y'}:
-            query_for_url(intersection,
+            query_for_url(list(intersection),
                           icu_file)
     # `final_ingredients` shares `Ingerdient`s from `valid_ingredients` and `ings_miss_cu` (s. `main.py`), since we are dealing with objects, **references** were passed around.
     urls = []
