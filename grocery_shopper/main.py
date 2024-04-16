@@ -22,7 +22,6 @@ def main(recipes: Iterable[str],
     dir = config['General']['dir']
     recipe_dir = os.path.join(dir, 'recipes')
 
-
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
     # TODO: Move path to config file <17-03-2024>
@@ -82,7 +81,8 @@ def main(recipes: Iterable[str],
     # => Makes printing with URL in the following possible
     urls = handle_ing_miss_cu(all_ings_missing_cu,
                               final_ingredients,
-                              icu_file)
+                              icu_file,
+                              firefox_profile)
 
     # TODO: When printing give user the chance to reedit list <18-01-2024>
     # Print and save sorted final shopping list

@@ -1,13 +1,22 @@
 from typing import Generator
 from grocery_shopper.ingredient import Ingredient
+import subprocess
 
 
 # TODO: Set datatype of 'ings_miss_cu' to 'Iterable' <06-04-2024>
 def query_for_url(ings_miss_cu,
-                  icu_file: str):
+                  icu_file: str,
+                  firefox_profile: str):
     """
     Ask user for URL of every `Ingredient` in `ing_miss_url`, append collected URLs to `icu_file` ([i]ngredient, [c]ategory, [u]rl).
     """
+    # TODO: It is probably better to move firefox behind terminal with wmctrl <16-04-2024>
+    # Open firefox with the urls which have the names of the missing ingredients as search pattern
+    firefox = f"firefox --profile {firefox_profile}"
+    subprocess.run([*firefox.split(' '),
+                    *(f'https://shop.rewe.de/productList?search={ing.name}'
+                    for ing in ings_miss_cu)])
+
     icu_entries = []
     for ing in ings_miss_cu:
         # Only change `category` if there was a "real" input ("real" == "not empty")
@@ -26,7 +35,8 @@ def query_for_url(ings_miss_cu,
 
 def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
                        final_ingredients: list[Ingredient],
-                       icu_file: str) -> tuple[str, ...]:
+                       icu_file: str,
+                       firefox_profile: str) -> tuple[str, ...]:
     """
     Initial query to give the opportunity to add `category` and `url` to the `Ingredient`s in `ings_miss_cu`.
     The `Ingredient`s are listed before user input is parsed. After all Categories and URLs were collected, they will be appended to the `icu_file` ([i]ngredient, [c]ategory, [u]rl).
@@ -44,7 +54,8 @@ def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
             print("Invalid input. Please enter 'yes' or 'no'.")
         if user_input in {'yes', 'y'}:
             query_for_url(list(intersection),
-                          icu_file)
+                          icu_file,
+                          firefox_profile)
     # `final_ingredients` shares `Ingerdient`s from `valid_ingredients` and `ings_miss_cu` (s. `main.py`), since we are dealing with objects, **references** were passed around.
     urls = tuple(ing.url for ing in final_ingredients)
     return urls
