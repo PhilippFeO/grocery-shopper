@@ -16,15 +16,19 @@ def filter_names(ingredients: list[Ingredient], names: set[str]) -> list[Ingredi
 
 
 def test_query_for_url(monkeypatch, tmp_path, ings_missing_cu):
+    # Mock firefox call
+    # None bc returned object is not used
+    monkeypatch.setattr('subprocess.run', lambda _: None)
     inputs = [(cat0 := 'Category 0'), (url0 := 'URL-0'),
               (cat1 := 'Category 1'), (url1 := 'URL-1.1 URL-1.2'),
               (cat2 := 'Category 2'), (url2 := 'URL-2')]
     monkeypatch.setattr('builtins.input', lambda _: inputs.pop(0))
 
     tmp_icu_file = tmp_path / 'ingredient_category_url.csv'
-    # print(icu_file)
+    # Used in 'subprocess.run', which is mocked anyway => Argument serves no purpose at all
+    firefox_profile = 'Lorem Ipsum'
 
-    query_for_url(list(ings_missing_cu), tmp_icu_file)
+    query_for_url(list(ings_missing_cu), tmp_icu_file, firefox_profile)
 
     ing0 = f'{ings_missing_cu[0].name},{cat0},{url0}'
     ing1 = f'{ings_missing_cu[1].name},{cat1},{url1.replace(" ", ",")}'
@@ -55,5 +59,3 @@ def test_parse_edited_list(all_ingredients):
     final_ingredients: list[Ingredient] = parse_edited_list(shopping_list_file, all_ingredients)
 
     assert Counter(expected_final_ingredients) == Counter(final_ingredients)
-
-
