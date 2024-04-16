@@ -1,4 +1,3 @@
-import random
 from typing import Generator
 from grocery_shopper.ingredient import Ingredient
 
@@ -27,7 +26,7 @@ def query_for_url(ings_miss_cu,
 
 def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
                        final_ingredients: list[Ingredient],
-                       icu_file: str) -> list[str]:
+                       icu_file: str) -> tuple[str, ...]:
     """
     Initial query to give the opportunity to add `category` and `url` to the `Ingredient`s in `ings_miss_cu`.
     The `Ingredient`s are listed before user input is parsed. After all Categories and URLs were collected, they will be appended to the `icu_file` ([i]ngredient, [c]ategory, [u]rl).
@@ -47,10 +46,5 @@ def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
             query_for_url(list(intersection),
                           icu_file)
     # `final_ingredients` shares `Ingerdient`s from `valid_ingredients` and `ings_miss_cu` (s. `main.py`), since we are dealing with objects, **references** were passed around.
-    urls = []
-    for ing in final_ingredients:
-        # Randomly select URL to have some variation
-        # url = random.sample(urls, 1)[0]
-        ing.selected_url = random.sample(ing.urls, 1)[0]
-        urls.append(ing.selected_url)
+    urls = tuple(ing.url for ing in final_ingredients)
     return urls
