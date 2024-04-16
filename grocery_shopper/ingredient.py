@@ -2,7 +2,10 @@
 
 
 class Ingredient:
-    def __init__(self, name: str, quantity: int | float | str, optional: bool = False,
+    def __init__(self,
+                 name: str,
+                 quantity: int | float | str,
+                 optional: bool = False,
                  category: str = 'N/A-CATEGORY',
                  url: str = 'N/A-URL',
                  meal: str = 'N/A-MEAL'):

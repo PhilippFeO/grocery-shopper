@@ -1,4 +1,3 @@
-import random
 from typing import Generator
 from grocery_shopper.ingredient import Ingredient
 
