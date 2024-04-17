@@ -27,12 +27,9 @@ tpypi: build tup
 
 # ─── Run ──────────
 
+# make run NUMBER
 run: install
-	grocery_shopper -n 2
-
-# mdl = Mandeln
-mdl: install
-	grocery_shopper --take ~/Documents/Kochen/recipes/Ricotta-Pasta_mit_Mandeln.yaml
+	grocery_shopper -n $(filter-out $@, $(MAKECMDGOALS))
 
 # ─── Test ──────────
 
