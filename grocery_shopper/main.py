@@ -2,6 +2,7 @@ from collections.abc import Iterable
 import glob
 import os
 import subprocess
+from typing import Callable
 from pathlib import Path
 from grocery_shopper.archive_contents import archive_contents
 from grocery_shopper.build_ingredients import read_icu_file
@@ -19,13 +20,12 @@ def main(recipes: Iterable[str],
     """
     config = read_default_values()
     firefox_profile = config['General']['firefox_profile']
-    dir = config['General']['dir']
-    recipe_dir = os.path.join(dir, 'recipes')
+    file_dir = config['General']['dir']
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
     # TODO: Move path to config file <17-03-2024>
-    icu_file: str = os.path.join(dir, 'res', 'ingredient_category_url.csv')
+    icu_file: str = os.path.join(file_dir, 'res', 'ingredient_category_url.csv')
 
     # Superlist to store ingredients from all files
     all_ingredients: list[Ingredient] = []
@@ -33,7 +33,7 @@ def main(recipes: Iterable[str],
     shopping_list_str = []
 
     # Instanciate closure
-    build_ingredients = read_icu_file(icu_file)
+    build_ingredients: Callable[[str], tuple[list[Ingredient], list[Ingredient]]] = read_icu_file(icu_file)
 
     def collect_ingredients_helper(recipe_file):
         # `valid_ingredients` have `category` and `url`
@@ -48,7 +48,7 @@ def main(recipes: Iterable[str],
         all_ingredients.extend(collect_ingredients_helper(recipe_file))
     shopping_list_str.append(make_table(all_ingredients) + '\n' * 2)
 
-    misc_dir = os.path.join(dir, 'misc')
+    misc_dir = os.path.join(file_dir, 'misc')
     # I want to add a destinct heading for each file in misc_dir misc.
     # Iterating over `sys.argv[1:] + misc_files` would only be possibe with various if-statements
     # because the CLI provided files don't get a "filename" heading like `misc_files` do.
@@ -70,7 +70,8 @@ def main(recipes: Iterable[str],
     # Open shopping list in $EDITOR to modify it
     # (some ingredients may already be in stock, like salt, so we can delete/don't have to buy it)
     # Set cursor on Position (3,1) for my Vi, Vim and Neovim friends :)
-    if (editor := os.environ['EDITOR']) in {'vi', 'vim', 'nvim'}:
+    # 'vi', 'vim' and 'nvim' all in 'nvim'
+    if (editor := os.environ['EDITOR']) in 'nvim':
         subprocess.run([editor, '+call cursor(3, 1)', shopping_list_file])
     else:
         subprocess.run([editor, shopping_list_file])

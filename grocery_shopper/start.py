@@ -29,22 +29,26 @@ def start():
     p.add_argument('-n', '--num_recipes',
                    help='Number of recipes',
                    type=int)
-    p.add_argument(f'--dir',
+    p.add_argument('--dir',
                    help='Top level directory. Here will all files and directories be saved.',
                    type=str)
-    p.add_argument(f'--firefox_profile',
+    p.add_argument('--firefox_profile',
                    help='Path to the firefox profile.',
                    type=str)
-    p.add_argument('--make-pdf',
-                   metavar='recipe.yaml',
-                   help='Generate pdfs from yaml files using LaTeX.',
-                   nargs='+',
-                   type=str)
-    p.add_argument('--take',
-                   metavar='recipe.yaml',
-                   help='Take the following ingredients and do no random selection.',
-                   nargs='+',
-                   type=str)
+    p.add_argument(
+        '--make-pdf',
+        metavar='recipe.yaml',
+        help='Generate pdfs from yaml files using LaTeX.',
+        nargs='+',
+        type=str
+    )
+    p.add_argument(
+        '--take',
+        metavar='recipe.yaml',
+        help='Take the following ingredients and do no random selection.',
+        nargs='+',
+        type=str
+    )
     args = p.parse_args()
 
     # Check config for firefox profile
@@ -64,15 +68,19 @@ def start():
                    resource_dir_name: resource_dir}
 
     # Write default values
-    with open(defaults_file_path, 'w') as f:
+    with open(defaults_file_path, 
+              'w') as f:
         config.write(f)
 
     # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024> 
     #   ...without type checker complains...
     recipes = tuple()
     if args.take and args.num_recipes > 0:
-        recipes = tuple(os.path.join(recipe_dir, recipe_file) for recipe_file in args.take) \
-            + tuple(select_recipes(args.num_recipes, recipe_dir))
+        recipes = tuple(os.path.join(recipe_dir,
+                                     recipe_file)
+                        for recipe_file in args.take) \
+            + tuple(select_recipes(args.num_recipes,
+                                   recipe_dir))
     elif args.num_recipes > 0:
         recipes = tuple(select_recipes(args.num_recipes, recipe_dir))
     elif args.take:

@@ -5,7 +5,7 @@ from typing import Callable
 from grocery_shopper.ingredient import Ingredient
 
 
-def read_icu_file(icu_file: str) -> Callable[str, tuple[list[Ingredient], list[Ingredient]]]:
+def read_icu_file(icu_file: str) -> Callable[[str], tuple[list[Ingredient], list[Ingredient]]]:
     """
     Uses a closure. Reads the ingredient_category_url.csv file and returns a function. This function has access
     to the constructed dictionary.
