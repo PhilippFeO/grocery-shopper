@@ -63,26 +63,26 @@ def start():
         config['General'][key_firefox_profile] = os.path.expanduser(args.firefox_profile)
 
     recipe_dir, misc_dir, resource_dir = setup_dirs(config)
-    directories = {recipe_dir_name: recipe_dir,
-                   misc_dir_name: misc_dir,
-                   resource_dir_name: resource_dir}
+    directories = {recipe_dir_name[:-1]: recipe_dir,
+                   misc_dir_name[:-1]: misc_dir,
+                   resource_dir_name[:-1]: resource_dir}
 
     # Write default values
-    with open(defaults_file_path, 
-              'w') as f:
+    with open(defaults_file_path, 'w') as f:
         config.write(f)
 
-    # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024> 
+    # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024>
     #   ...without type checker complains...
     recipes = tuple()
-    if args.take and args.num_recipes > 0:
-        recipes = tuple(os.path.join(recipe_dir,
-                                     recipe_file)
-                        for recipe_file in args.take) \
-            + tuple(select_recipes(args.num_recipes,
-                                   recipe_dir))
-    elif args.num_recipes > 0:
-        recipes = tuple(select_recipes(args.num_recipes, recipe_dir))
+    if args.num_recipes:
+        if args.take and args.num_recipes > 0:
+            recipes = tuple(os.path.join(recipe_dir,
+                                         recipe_file)
+                            for recipe_file in args.take) \
+                + tuple(select_recipes(args.num_recipes,
+                                       recipe_dir))
+        elif args.num_recipes > 0:
+            recipes = tuple(select_recipes(args.num_recipes, recipe_dir))
     elif args.take:
         recipes = tuple(os.path.join(recipe_dir, recipe_file) for recipe_file in args.take)
     elif args.make_pdf:
