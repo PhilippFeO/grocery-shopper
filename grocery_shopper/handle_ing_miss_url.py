@@ -13,9 +13,9 @@ def query_for_url(ings_miss_cu,
     # TODO: It is probably better to move firefox behind terminal with wmctrl <16-04-2024>
     # Open firefox with the urls which have the names of the missing ingredients as search pattern
     firefox = f"firefox --profile {firefox_profile}"
-    subprocess.run([*firefox.split(' '),
-                    *(f'https://shop.rewe.de/productList?search={ing.name}'
-                    for ing in ings_miss_cu)])
+    subprocess.Popen([*firefox.split(' '),
+                      *(f'https://shop.rewe.de/productList?search={ing.name}'
+                      for ing in ings_miss_cu)])
 
     icu_entries = []
     for ing in ings_miss_cu:
