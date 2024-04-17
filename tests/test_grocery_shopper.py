@@ -18,7 +18,7 @@ def filter_names(ingredients: list[Ingredient], names: set[str]) -> list[Ingredi
 def test_query_for_url(monkeypatch, tmp_path, ings_missing_cu):
     # Mock firefox call
     # None bc returned object is not used
-    monkeypatch.setattr('subprocess.run', lambda _: None)
+    monkeypatch.setattr('subprocess.Popen', lambda _: None)
     inputs = [(cat0 := 'Category 0'), (url0 := 'URL-0'),
               (cat1 := 'Category 1'), (url1 := 'URL-1.1 URL-1.2'),
               (cat2 := 'Category 2'), (url2 := 'URL-2')]
