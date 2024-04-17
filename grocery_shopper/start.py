@@ -85,12 +85,12 @@ def start():
             recipes = tuple(select_recipes(args.num_recipes, recipe_dir))
     elif args.take:
         recipes = tuple(os.path.join(recipe_dir, recipe_file) for recipe_file in args.take)
-    elif args.make_pdf:
-        yaml2pdf.yaml2pdf(args.make_pdf, recipe_dir, resource_dir)
 
-    # Abfahrt
-    assert len(recipes) > 0
-    main.main(recipes, directories)
+    if len(recipes) > 0:
+        main.main(recipes, directories)
+
+    if args.make_pdf:
+        yaml2pdf.yaml2pdf(args.make_pdf, recipe_dir, resource_dir)
 
 
 if __name__ == "__main__":
