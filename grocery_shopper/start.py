@@ -63,9 +63,9 @@ def start():
         config['General'][key_firefox_profile] = os.path.expanduser(args.firefox_profile)
 
     recipe_dir, misc_dir, resource_dir = setup_dirs(config)
-    directories = {recipe_dir_name[:-1]: recipe_dir,
-                   misc_dir_name[:-1]: misc_dir,
-                   resource_dir_name[:-1]: resource_dir}
+    directories = {recipe_dir_name: recipe_dir,
+                   misc_dir_name: misc_dir,
+                   resource_dir_name: resource_dir}
 
     # Write default values
     with open(defaults_file_path, 'w') as f:
