@@ -6,6 +6,7 @@ git_root_dir := $(shell git rev-parse --show-toplevel)
 all: einstall run
 
 # Do a local/editable install
+# Only necessary once
 einstall:
 	pip install -e $(git_root_dir) 
 
