@@ -99,7 +99,7 @@ def main(recipes: Iterable[str],
 
     # Archive shopping list and recipes
     # Return values is mainly for unit testing
-    _ = archive_contents(shopping_list_file, directories['recipes'], recipes)
+    _ = archive_contents(shopping_list_file, file_dir, recipes)
 
     # Open firefox with specific profile
     # subpress warnings
