@@ -25,7 +25,7 @@ def main(recipes: Iterable[str],
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
     # TODO: Move path to config file <17-03-2024>
-    icu_file: str = os.path.join(file_dir, 'res', 'ingredient_category_url.csv')
+    icu_file: str = os.path.join(file_dir, directories['.resources'], 'ingredient_category_url.csv')
 
     # Superlist to store ingredients from all files
     all_ingredients: list[Ingredient] = []
