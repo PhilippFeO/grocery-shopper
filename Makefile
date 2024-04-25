@@ -38,11 +38,11 @@ run: install
 # ie. every line is stateless
 # -q: less verbose test output
 test:
-	@cd $(git_root_dir) && python -m pytest -rA -s -q tests/
+	@cd $(git_root_dir) && python3 -m pytest -rA -s -q tests/
 
 # Verbose tests, ie. with normal output
 vtest:
-	@cd $(git_root_dir) && python -m pytest -rA -s tests/
+	@cd $(git_root_dir) && python3 -m pytest -rA -s tests/
 
 # ─── pdf ──────────
 pdf:
