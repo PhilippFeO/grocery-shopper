@@ -1,4 +1,3 @@
-
 import pytest
 from grocery_shopper.ingredient import Ingredient
 
