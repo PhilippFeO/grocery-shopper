@@ -9,7 +9,6 @@ hooks/
 2024/
 Rezepte.md
 out/
-out/
 # Ignore files, directories and links
 *.pdf
 pdf
