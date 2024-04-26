@@ -16,7 +16,7 @@ def filter_names(ingredients: list[Ingredient], names: set[str]) -> list[Ingredi
     return [ing for ing in ingredients if ing.name in names]
 
 
-def test_handle_ing_miss_cu(monkeypatch, tmp_path, ings_missing_cu, ings_with_cu):
+def test_handle_ing_miss_cu_add_category_url(monkeypatch, tmp_path, ings_missing_cu, ings_with_cu):
     """
     Test for method `handle_ing_miss_cu`. Verifys that Category and URL are added to the ingredients missing these attribute (values), ie. ingredients in `ings_missing_cu`.
     """
