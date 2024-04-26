@@ -1,9 +1,10 @@
-from grocery_shopper.build_ingredients import read_icu_file
-from grocery_shopper.ingredient import Ingredient
-from grocery_shopper.handle_ing_miss_url import query_for_url, handle_ing_miss_cu
-from grocery_shopper.parse_edited_list import parse_edited_list
 import os
 from collections import Counter
+
+from grocery_shopper.build_ingredients import read_icu_file
+from grocery_shopper.handle_ing_miss_url import handle_ing_miss_cu, query_for_url
+from grocery_shopper.ingredient import Ingredient
+from grocery_shopper.parse_edited_list import parse_edited_list
 
 shopping_list_file: str = os.path.join('tests',
                                        'shopping_list_test.txt')
@@ -27,11 +28,12 @@ def test_handle_ing_miss_cu(monkeypatch, tmp_path, ings_missing_cu, ings_with_cu
               'Category 1',  'URL-1.1 URL-1.2',
               'Category 2',  'URL-2']
     monkeypatch.setattr('builtins.input', lambda _: inputs.pop(0))
-    handle_ing_miss_cu(ings_missing_cu,
-                       final_ingredients,
-                       icu_file=tmp_path / 'ingredient_category_url.csv',
-                       firefox_profile=firefox_profile)
-    assert all(ing.url != 'N/A-URL' for ing in final_ingredients)
+    urls = handle_ing_miss_cu(ings_missing_cu,
+                              final_ingredients,
+                              icu_file=tmp_path / 'ingredient_category_url.csv',
+                              firefox_profile=firefox_profile)
+    # assert all(ing.url != 'N/A-URL' for ing in final_ingredients)
+    assert all(url != 'N/A-URL' for url in urls)
 
 
 def test_query_for_url(monkeypatch, tmp_path, ings_missing_cu):
