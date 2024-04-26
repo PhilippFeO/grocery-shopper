@@ -1,7 +1,7 @@
 # Execute all, especially Tests in the root dir of git repo
 git_root_dir := $(shell git rev-parse --show-toplevel) 
 
-.PHONY: all run test vtest einstall install build tup tpypi mdl 
+.PHONY: all run runarg test vtest einstall build tup tpypi venv
 
 all: run
 
@@ -28,8 +28,14 @@ tpypi: build tup
 
 
 # ─── Run ──────────
+# venv:
+# 	cd .venv && source bin/activate
+
+run:
+	grocery_shopper -n 2
+
 # make run NUMBER
-run: install
+runarg:
 	grocery_shopper -n $(filter-out $@, $(MAKECMDGOALS))
 
 
