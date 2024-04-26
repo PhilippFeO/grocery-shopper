@@ -32,8 +32,27 @@ def test_handle_ing_miss_cu(monkeypatch, tmp_path, ings_missing_cu, ings_with_cu
                               final_ingredients,
                               icu_file=tmp_path / 'ingredient_category_url.csv',
                               firefox_profile=firefox_profile)
-    # assert all(ing.url != 'N/A-URL' for ing in final_ingredients)
+    assert all(ing.category != 'N/A-CATEGORY' for ing in final_ingredients)
     assert all(url != 'N/A-URL' for url in urls)
+
+
+def test_handle_ing_miss_cu_add_no_category_url(monkeypatch, tmp_path, ings_missing_cu, ings_with_cu):
+    """
+    Test for method `handle_ing_miss_cu`. Verifys that Category and URL are not added to the ingredients missing these attribute (values), ie. ingredients in `ings_missing_cu` are left blank after user entered 'n'.
+    """
+    # TODO: Change name(s) of test methods <26-04-2024>
+    final_ingredients = ings_missing_cu + ings_with_cu
+    assert any(ing.url == 'N/A-URL'
+               for ing in final_ingredients)
+    firefox_profile = ''
+
+    monkeypatch.setattr('builtins.input', lambda _: 'n')
+    _ = handle_ing_miss_cu(ings_missing_cu,
+                           final_ingredients,
+                           icu_file=tmp_path / 'ingredient_category_url.csv',
+                           firefox_profile=firefox_profile)
+    assert all(ing.url == 'N/A-URL' for ing in ings_missing_cu)
+    assert all(ing.url != 'N/A-URL' for ing in ings_with_cu)
 
 
 def test_query_for_url(monkeypatch, tmp_path, ings_missing_cu):
