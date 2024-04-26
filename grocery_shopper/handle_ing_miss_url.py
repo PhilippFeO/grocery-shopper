@@ -1,6 +1,8 @@
-from typing import Generator
-from grocery_shopper.ingredient import Ingredient
 import subprocess
+import random
+from typing import Generator
+
+from grocery_shopper.ingredient import Ingredient
 
 
 # TODO: Set datatype of 'ings_miss_cu' to 'Iterable' <06-04-2024>
@@ -25,8 +27,9 @@ def query_for_url(ings_miss_cu,
             ing.category = c
         # Same with url
         if (u := input(f'URL(s) of "{ing.name}": ')) != '':
-            ing.urls = u.split(' ')
-        icu_entries.append(f'{ing.name},{ing.category},{",".join(ing.urls)}')
+            urls = u.split(' ')
+            ing.url = random.sample(urls, 1)[0]
+            icu_entries.append(f'{ing.name},{ing.category},{",".join(urls)}')
     # Now, all missing `category` and `url` were completed => append to CSV file
     with open(icu_file, 'a') as f:
         # Remove last '\n' char to have a continuous CSV file
@@ -50,7 +53,7 @@ def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
         join_str = '\t - '
         bullet_list_ing_miss_url: str = join_str + join_str.join(ing_names_miss_url)
         print(f'{bullet_list_ing_miss_url}')
-        while (user_input := input("yes/no: ").lower()) not in {'yes', 'y', 'no', 'n'}:
+        while (user_input := input("yes/no: ").lower()) not in ('yes', 'y', 'no', 'n'):
             print("Invalid input. Please enter 'yes' or 'no'.")
         if user_input in {'yes', 'y'}:
             query_for_url(list(intersection),
