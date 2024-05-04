@@ -14,23 +14,29 @@ Then, instanciate a new virtual enviornment, change into the `grocery_shopper` d
 
 ## How it works
 1. Create a firefox profile for grocery shopping only [2].
-2. Create a new/different directory like `~/Documents/grocery_shopper/` and there two additional ones: `recipes/` and `misc/`. `recipes/` is for your recipes. `misc/` is for additional stuff. Place your recipes (examples will follow) in these folders. You should end up like this:
+
+2. Clone this repository where you want:
+```sh
+git clone https://github.com/PhilippFeO/grocery-shopper
 ```
-~/Documents/grocery_shopper/recipes/
-~/Documents/grocery_shopper/misc/
-```
 
-3. Create some recipes (s. below). 
+3. Run (in the cloned repository) `pip install -e .`
 
-4. Run `grocery-shopper -n NUM_RECIPES` to randomly select `NUM_RECIPES` recipes you want to cook. If it's your first run, the program will ask you for the path to the firefox profile and the parent directory of `recipes/` and `misc/` (ie `~/Documents/grocery_shopper/`) created under 2. 
+4. Enter the directory where `grocery_shopper` shall operate, fi. `~/Documents/grocery_shopper`. The programm will generate some folders on first invocation.
 
-5. The programm will parse the randomly chosen recipes and open the default text editor (`$EDITOR`) with all ingredients. There you can delete these ingredients you already have in stock. Save and quit after you are done. 
+5. Run `grocery_shopper --firefox_profile PATH` where `PATH` points to the in step 1 created profile.
 
-6. The URLs for each ingredient are looked up. If it can't find one for the specific ingredient, it will ask you to manually add one via the command line. The submitted links are saved and reused separately from the recipe. Ingredient and link are saved in a destinct file under `res/`. This directory will be created next to `recipes/` and `misc/`. 
+6. Create some recipes (s. below). 
 
-7. After all URLs were collected, Firefox opens the URLs in tabs using your new profile. 
+7. Run `grocery-shopper -n NUM_RECIPES` to randomly select `NUM_RECIPES` recipes you want to cook.
 
-8. The final shopping list (ie. the contents of the buffer you edited with `$EDITOR`) and the recipes are archived and a sym link (`Selection`) is created (to have some traceability). All next to `recipes/` and `misc/`. 
+8. The programm will parse the randomly chosen recipes and open the default text editor (`$EDITOR`) with all ingredients. There you can delete the ingredients you already have in stock. Save and quit after you are done. 
+
+9. The URLs for each ingredient are looked up. If it can't find one for the specific ingredient, it will ask you to manually add one or multiple separated by space via the command line. The submitted link(s) are saved separately from the recipe. Ingredient name and link(s) are written in a destinct file under `.resoures/`. This directory will be created next to `recipes/` and `misc/`. 
+
+10. After all URLs were collected, Firefox opens the URLs in tabs using your new profile. 
+
+8. The final shopping list (ie. the contents of the buffer you edited with `$EDITOR`) and the recipes are archived (`./archive/`) and a sym link (`Selection`) is created (to have some traceability). All next to `recipes/` and `misc/`. 
 
 
 ## Structure of your recipes
