@@ -3,6 +3,7 @@ import configparser
 import sys
 import logging
 from grocery_shopper.vars import directories
+from grocery_shopper.vars import defaults_file
 
 
 def setup_dirs_helper(path: str) -> None:
@@ -18,7 +19,7 @@ def setup_dirs_helper(path: str) -> None:
 
 
 def setup_dirs(config: configparser.ConfigParser,
-               defaults_file_path: str) -> dict[str, str]:
+               defaults_file_path: str = f'{os.path.dirname(__file__)}/{defaults_file}') -> str:
     """Checks if necessary directories (s. `vars.py`) exists and if not, creates them.
 
     :config: Config with default values set by user.
@@ -40,4 +41,4 @@ def setup_dirs(config: configparser.ConfigParser,
         with open(defaults_file_path, 'w') as f:
             config.write(f)
 
-    return directories
+    return general_dir
