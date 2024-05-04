@@ -36,7 +36,7 @@ def start():
                    help='Path to the firefox profile.',
                    type=str)
     p.add_argument(
-        '--make-pdf',
+        '--pdf',
         metavar='recipe.yaml',
         help='Generate pdfs from yaml files using LaTeX.',
         nargs='+',
@@ -73,7 +73,7 @@ def start():
 
     # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024>
     #   ...without type checker complains...
-    recipes = tuple()
+    recipes = ()
     if args.num_recipes:
         if args.take and args.num_recipes > 0:
             recipes = tuple(os.path.join(recipe_dir,
@@ -89,8 +89,8 @@ def start():
     if len(recipes) > 0:
         main.main(recipes, directories)
 
-    if args.make_pdf:
-        yaml2pdf.yaml2pdf(args.make_pdf, recipe_dir, resource_dir)
+    if args.pdf:
+        yaml2pdf.yaml2pdf(args.pdf, recipe_dir, resource_dir)
 
 
 if __name__ == "__main__":
