@@ -36,7 +36,7 @@ class Recipe:
         table_body = ''
 
         # Make optional ingredients gray
-        def color_ingredient(ing: Ingredient) -> str:
+        def color_ingredient(ing: Ingredient | None) -> str:
             """ Dye optional ingredients gray. """
             if ing and ing.optional:
                 s = f'\\textcolor{{gray}}{{- {ing.quantity} {ing.name}}}'
