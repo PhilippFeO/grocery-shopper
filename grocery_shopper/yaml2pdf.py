@@ -69,7 +69,9 @@ def read_recipe(file_path):
     return Recipe(recipe_data['recipe'][0]['name'], recipe_data['ingredients'], recipe_data['preparation'])
 
 
-def yaml2pdf(recipe_yamls: list[str], recipe_dir: str, resource_dir: str):
+def yaml2pdf(recipe_yamls: list[str],
+             recipe_dir: str):
+    outdir = "/tmp/grocery_shopper/"
     for recipe_file in recipe_yamls:
         recipe: Recipe = read_recipe(recipe_file)
         recipe.to_latex()
@@ -77,7 +79,7 @@ def yaml2pdf(recipe_yamls: list[str], recipe_dir: str, resource_dir: str):
         cp: subprocess.CompletedProcess = subprocess.run([
             os.path.join('grocery_shopper', 'compile_recipe.sh'),
             os.path.join('grocery_shopper', 'template.tex'),
-            resource_dir],
+            outdir]
             # stdout=subprocess.DEVNULL,
             # stderr=subprocess.DEVNULL
         )
@@ -88,5 +90,6 @@ def yaml2pdf(recipe_yamls: list[str], recipe_dir: str, resource_dir: str):
             if not os.path.isdir(pdf_dir):
                 os.makedirs(pdf_dir, exist_ok=True)
             basename = Path(recipe_file).stem
-            shutil.move(os.path.join(resource_dir, 'out', 'template.pdf'),
+            #
+            shutil.move(os.path.join(outdir, 'template.pdf'),
                         os.path.join(pdf_dir, f'{basename}.pdf'))

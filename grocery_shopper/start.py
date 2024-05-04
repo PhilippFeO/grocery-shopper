@@ -90,7 +90,7 @@ def start():
         main.main(recipes, directories)
 
     if args.pdf:
-        yaml2pdf.yaml2pdf(args.pdf, recipe_dir, resource_dir)
+        yaml2pdf.yaml2pdf(args.pdf, recipe_dir)
 
 
 if __name__ == "__main__":

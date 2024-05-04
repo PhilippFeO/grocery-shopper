@@ -2,8 +2,12 @@
 # Compile CLI provided tex file of a recipes.
 
 if [ $# -ne 2 ]; then
-    echo "Usage: $0 .tex-file resource-dir"
+    echo "Usage: $0 .tex-file outdir"
     exit 1
 fi
 
-latexmk -verbose -file-line-error -interaction=nonstopmode -outdir="$2"/out "$1"
+tex_file="$1"
+outdir="$2"
+
+mkdir -p "$outdir"
+latexmk -verbose -file-line-error -interaction=nonstopmode -outdir="$outdir" "$tex_file"
