@@ -7,7 +7,6 @@ from math import ceil
 from pathlib import Path
 from itertools import zip_longest
 from grocery_shopper.ingredient import Ingredient
-from grocery_shopper.read_default_values import read_default_values
 
 
 class Recipe:
