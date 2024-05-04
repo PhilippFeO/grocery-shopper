@@ -22,7 +22,7 @@ git clone https://github.com/PhilippFeO/grocery-shopper
 
 3. Run (in the cloned repository) `pip install -e .`
 
-4. Enter the directory where `grocery_shopper` shall operate, fi. `~/Documents/grocery_shopper`. The programm will generate some folders on first invocation.
+4. Create/Enter the directory where `grocery_shopper` shall operate, fi. `~/Documents/grocery_shopper`. The programm will generate some folders on first invocation.
 
 5. Run `grocery_shopper --firefox_profile PATH` where `PATH` points to the in step 1 created profile.
 
@@ -85,6 +85,9 @@ ingredients:
 
 ## Syntax completion for Neovim
 - I have written a source for Neovim, ie. [nvim-cmp](https://github.com/hrsh7th/nvim-cmp), which completes the ingredients. You can find it in my Repos or [here](https://github.com/PhilippFeO/cmp-csv). Having syntax completion provides you from typos, duplication and remembering which `Ingredient` is already with URL available.
+
+## Syntax completion for bash
+Append the contents of [syntax_completion.sh](./syntax_completion.sh) to you `~/.bashrc` to enable auto completion for the recipes in your `recipes/` directory. In case you don't use `~/Documents/grocery_shopper`, you have to exchange the value of `recipe_dir` in the script. Auto completion is not activated automatically bis `pip intall -e .`! You have to do it manually.
 
 
 ## Some thoughts on 6.
