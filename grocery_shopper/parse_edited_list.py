@@ -1,10 +1,13 @@
 
 import subprocess
-from grocery_shopper.ingredient import Ingredient
 from grocery_shopper.make_table import spacing, name_col_num
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from grocery_shopper.ingredient import Ingredient
 
 
-def parse_edited_list(shopping_list_file: str, all_ingredients: list[Ingredient]):
+def parse_edited_list(shopping_list_file: str, all_ingredients: list['Ingredient']):
     # Filter final ingredients for `name` and `quantity`
     # Dont hardcode column number, otherwise changes have to be adapted here again => annoying
     # Keep `name` column and `quantity` column (the following one)
