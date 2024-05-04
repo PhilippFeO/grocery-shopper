@@ -1,13 +1,16 @@
-from collections.abc import Iterable
 import os
 import glob
 import sys
 import random
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
-def select_recipes(num_recipes, recipe_dir) -> Iterable[str]:
+def select_recipes(num_recipes, recipe_dir) -> "Iterable[str]":
     """Randomly selects submitted number of recipes.
 
     :param int num_recipes: Number of recipes
@@ -19,9 +22,10 @@ def select_recipes(num_recipes, recipe_dir) -> Iterable[str]:
         sys.exit(1)
 
     # Check if there are files in the directory
-    num_files = len((yaml_files := glob.glob(os.path.join(recipe_dir, '*.yaml'))))
+    yaml_files = glob.glob(os.path.join(recipe_dir, '*.yaml'))
+    num_files = len(yaml_files)
     if num_files == 0:
-        logging.error(f"No yaml-files found in the directory '{recipe_dir}'.")
+        logging.error(f"No yaml-files found in directory '{recipe_dir}'. Just add one.")
         sys.exit(1)
 
     if num_recipes < 1 or num_files < num_recipes:
