@@ -14,13 +14,15 @@ def setup_dirs_helper(path: str) -> None:
             # TODO: Logging <12-04-2024>
             logging.info(
                 f"(Re)move (possible old) {tmp_dir} or change location completely.\nOriginal Error: {str(ose)}")
-            sys.exit(1)
+            sys.exit(2)
 
 
-def setup_dirs(config: configparser.ConfigParser) -> dict[str, str]:
+def setup_dirs(config: configparser.ConfigParser,
+               defaults_file_path: str) -> dict[str, str]:
     """Checks if necessary directories (s. `vars.py`) exists and if not, creates them.
 
     :config: Config with default values set by user.
+    :defaults_file_path: Path to the `defaults.ini` file
     :returns: Path of the three directories, ie. path + name (mentioned above).
     """
     # Check if directory was already set, ie program was ran at least once
@@ -34,5 +36,8 @@ def setup_dirs(config: configparser.ConfigParser) -> dict[str, str]:
         # The function might exit, then no values should be written to config
         setup_dirs_helper(general_dir)
         config['general']['dir'] = os.path.expanduser(general_dir)
+        # Write default values
+        with open(defaults_file_path, 'w') as f:
+            config.write(f)
 
     return directories

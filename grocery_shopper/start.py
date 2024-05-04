@@ -65,7 +65,7 @@ def start():
         with open(defaults_file_path, 'w') as f:
             config.write(f)
 
-    directories = setup_dirs(config)
+    directories = setup_dirs(config, defaults_file_path)
     # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024>
     #   ...without type checker complains...
     recipes = ()
