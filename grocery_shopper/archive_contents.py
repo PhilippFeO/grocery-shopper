@@ -1,25 +1,32 @@
-from collections.abc import Iterable
 import os
 import shutil
 import logging
 from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
+from grocery_shopper.vars import archive_dir_name
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
-def create_archive_dir(recipe_paths: list[str],
-                       recipe_dir: str):
+def create_archive_dir(recipe_paths: 'Iterable[str]',
+                       archive_location: str):
     """
     Helper function which creates the a directory 'yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/'.
 
+    :recipe_paths: Iterable with the paths to the yaml files of the recipes.
+    :archive_location: Directory, where recipes/, misc/ and .resources/ are
     :returns: The directory name as `str`.
     """
     current_date = datetime.now().strftime('%Y-%m-%d')
-    current_year = datetime.now().strftime('%Y')
 
     # Create subdirectory with the specified scheme
     recipe_names = [Path(recipe).stem for recipe in recipe_paths]
     archived_shopping_list_name = f'{"-".join((current_date, *recipe_names))}'
-    archive_dir_path = os.path.join(recipe_dir, current_year, archived_shopping_list_name)
+    archive_dir_path = os.path.join(archive_location,
+                                    archive_dir_name,
+                                    archived_shopping_list_name)
     os.makedirs(archive_dir_path, exist_ok=True)
 
     return archive_dir_path
@@ -50,7 +57,9 @@ def create_convenience_symlink(archive_dir_path: str):
     os.rename(temp_link, link_name)
 
 
-def archive_contents(shopping_list_file: str, archive_location: str, recipe_paths: Iterable[str]) -> list[str]:
+def archive_contents(shopping_list_file: str,
+                     general_dir: str,
+                     recipe_paths: 'Iterable[str]') -> list[str]:
     """
     Save shopping list to yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/yyyy-mm-dd-recipes[0]-...-recipes[n].txt.
     Create sym links of the used recipes next to it to have all resources close at hand.
@@ -60,13 +69,13 @@ def archive_contents(shopping_list_file: str, archive_location: str, recipe_path
     :param recipe_paths: Paths to the recipes which will be archived.
     :returns: List of the created symlinks.
 
-    Reminder: `recipe_dir` function parameter because importing from main doesn't work due to circular import.
+    Reminder: `general_dir` parameter because importing from main doesn't work due to circular import.
     """
     # TODO: I dont like how the whole paths are assembled <06-04-2024>
     #   fi: Path(recipe_path).name
     #       Second symlink (symlink to the pdf)
-    archive_dir_path: str = create_archive_dir(recipe_paths,
-                                               archive_location)
+    archive_dir_path: str = create_archive_dir(recipe_paths=recipe_paths,
+                                               archive_location=general_dir)
     copy_shopping_list(shopping_list_file,
                        archive_dir_path)
     create_convenience_symlink(archive_dir_path)

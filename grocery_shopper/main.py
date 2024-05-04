@@ -22,12 +22,12 @@ def main(recipes: 'Iterable[str]',
     """
     config = read_default_values()
     firefox_profile = config['General']['firefox_profile']
-    file_dir = config['General']['dir']
+    general_dir = config['General']['dir']
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
     # TODO: Move path to config file <17-03-2024>
-    icu_file: str = os.path.join(file_dir, directories['.resources'], 'ingredient_category_url.csv')
+    icu_file: str = os.path.join(general_dir, directories['.resources'], 'ingredient_category_url.csv')
 
     # Superlist to store ingredients from all files
     all_ingredients: list[Ingredient] = []
@@ -50,7 +50,7 @@ def main(recipes: 'Iterable[str]',
         all_ingredients.extend(collect_ingredients_helper(recipe_file))
     shopping_list_str.append(make_table(all_ingredients) + '\n' * 2)
 
-    misc_dir = os.path.join(file_dir, 'misc')
+    misc_dir = os.path.join(general_dir, 'misc')
     # I want to add a destinct heading for each file in misc_dir misc.
     # Iterating over `sys.argv[1:] + misc_files` would only be possibe with various if-statements
     # because the CLI provided files don't get a "filename" heading like `misc_files` do.
@@ -101,7 +101,9 @@ def main(recipes: 'Iterable[str]',
 
     # Archive shopping list and recipes
     # Return values is mainly for unit testing
-    _ = archive_contents(shopping_list_file, file_dir, recipes)
+    _ = archive_contents(shopping_list_file,
+                         general_dir=general_dir,
+                         recipe_paths=recipes)
 
     # Open firefox with specific profile
     # subpress warnings
