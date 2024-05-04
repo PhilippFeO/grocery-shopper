@@ -72,7 +72,7 @@ def yaml2pdf(recipe_yamls: list[str],
              recipe_dir: str):
     outdir = "/tmp/grocery_shopper/"
     for recipe_file in recipe_yamls:
-        recipe: Recipe = read_recipe(recipe_file)
+        recipe: Recipe = read_recipe(os.path.join(recipe_dir, recipe_file))
         recipe.to_latex()
         # Compile recipe before moving to next
         cp: subprocess.CompletedProcess = subprocess.run([
