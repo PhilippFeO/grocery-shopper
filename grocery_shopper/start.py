@@ -6,7 +6,7 @@ import sys
 from grocery_shopper import main
 from grocery_shopper.setup_dirs import setup_dirs
 from grocery_shopper import yaml2pdf
-from grocery_shopper.vars import defaults_file, recipe_dir_name, misc_dir_name, resource_dir_name
+from grocery_shopper.vars import defaults_file
 from grocery_shopper.select_recipes import select_recipes
 
 
@@ -65,31 +65,27 @@ def start():
         with open(defaults_file_path, 'w') as f:
             config.write(f)
 
-    recipe_dir, misc_dir, resource_dir = setup_dirs(config)
-    directories = {recipe_dir_name: recipe_dir,
-                   misc_dir_name: misc_dir,
-                   resource_dir_name: resource_dir}
-
+    directories = setup_dirs(config)
     # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024>
     #   ...without type checker complains...
     recipes = ()
     if args.num_recipes:
         if args.take and args.num_recipes > 0:
-            recipes = tuple(os.path.join(recipe_dir,
+            recipes = tuple(os.path.join(directories['recipe_dir'],
                                          recipe_file)
                             for recipe_file in args.take) \
                 + tuple(select_recipes(args.num_recipes,
-                                       recipe_dir))
+                                       directories['recipe_dir']))
         elif args.num_recipes > 0:
-            recipes = tuple(select_recipes(args.num_recipes, recipe_dir))
+            recipes = tuple(select_recipes(args.num_recipes, directories['recipe_dir']))
     elif args.take:
-        recipes = tuple(os.path.join(recipe_dir, recipe_file) for recipe_file in args.take)
+        recipes = tuple(os.path.join(directories['recipe_dir'], recipe_file) for recipe_file in args.take)
 
     if len(recipes) > 0:
         main.main(recipes, directories, config)
 
     if args.pdf:
-        yaml2pdf.yaml2pdf(args.pdf, recipe_dir)
+        yaml2pdf.yaml2pdf(args.pdf, directories['recipe_dir'])
 
 
 if __name__ == "__main__":

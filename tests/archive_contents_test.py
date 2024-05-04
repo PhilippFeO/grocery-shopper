@@ -1,6 +1,10 @@
 from grocery_shopper.archive_contents import archive_contents, create_archive_dir, copy_shopping_list
 import os
 from test_grocery_shopper import shopping_list_file
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 def test_create_archive_dir(tmp_path):
@@ -28,8 +32,10 @@ def test_archive_contents(tmp_path):
     """
     Test function for archive_contents()
     """
-    recipe_paths: tuple[str] = (
-        f"/localhome/rost_ph/proj/grocery-shopper/tests/{recipe_yaml}" for recipe_yaml in ("Testgericht_0.yaml", "Testgericht_1.yaml"))
+    recipe_paths: Generator[str, None, None] = (
+        f"/localhome/rost_ph/proj/grocery-shopper/tests/{recipe_yaml}"
+        for recipe_yaml in ("Testgericht_0.yaml",
+                            "Testgericht_1.yaml"))
     symlinked_files = archive_contents(shopping_list_file, str(tmp_path), recipe_paths)
 
     # Check if symlinks were created

@@ -1,5 +1,7 @@
 defaults_file: str = 'defaults.ini'
-recipe_dir_name: str = 'recipes'
-misc_dir_name: str = 'misc'
-resource_dir_name: str = '.resources'
-archive_dir_name: str = '.archive'
+directories: dict[str, str] = {
+    'recipe_dir': 'recipes',
+    'misc_dir': 'misc',
+    'resource_dir': '.resources',
+    'archive_dir': '.archive',
+}

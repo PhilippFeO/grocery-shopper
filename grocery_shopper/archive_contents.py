@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
-from grocery_shopper.vars import archive_dir_name
+from grocery_shopper.vars import directories
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -25,7 +25,7 @@ def create_archive_dir(recipe_paths: 'Iterable[str]',
     recipe_names = [Path(recipe).stem for recipe in recipe_paths]
     archived_shopping_list_name = f'{"-".join((current_date, *recipe_names))}'
     archive_dir_path = os.path.join(archive_location,
-                                    archive_dir_name,
+                                    directories['archive_dir'],
                                     archived_shopping_list_name)
     os.makedirs(archive_dir_path, exist_ok=True)
 

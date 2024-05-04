@@ -27,7 +27,7 @@ def main(recipes: 'Iterable[str]',
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
     # TODO: Move path to config file <17-03-2024>
-    icu_file: str = os.path.join(general_dir, directories['.resources'], 'ingredient_category_url.csv')
+    icu_file: str = os.path.join(general_dir, directories['resource_dir'], 'ingredient_category_url.csv')
 
     # Superlist to store ingredients from all files
     all_ingredients: list[Ingredient] = []
@@ -50,7 +50,7 @@ def main(recipes: 'Iterable[str]',
         all_ingredients.extend(collect_ingredients_helper(recipe_file))
     shopping_list_str.append(make_table(all_ingredients) + '\n' * 2)
 
-    misc_dir = os.path.join(general_dir, 'misc')
+    misc_dir = os.path.join(general_dir, directories['misc_dir'])
     # I want to add a destinct heading for each file in misc_dir misc.
     # Iterating over `sys.argv[1:] + misc_files` would only be possibe with various if-statements
     # because the CLI provided files don't get a "filename" heading like `misc_files` do.
