@@ -21,7 +21,8 @@ def start():
     config = configparser.ConfigParser()
     try:
         # According to Doc: Use read_file() when file is expected to exists
-        config.read_file(open(defaults_file_path))
+        with open(defaults_file_path) as config_file:
+            config.read_file(config_file)
     except FileNotFoundError:
         config['General'] = {}
 
@@ -47,8 +48,7 @@ def start():
         metavar='recipe.yaml',
         help='Take the following ingredients and do no random selection.',
         nargs='+',
-        type=str
-    )
+        type=str)
     args = p.parse_args()
 
     # Check config for firefox profile
@@ -61,15 +61,14 @@ def start():
             sys.exit(1)
     else:
         config['General'][key_firefox_profile] = os.path.expanduser(args.firefox_profile)
+        # Write default values
+        with open(defaults_file_path, 'w') as f:
+            config.write(f)
 
     recipe_dir, misc_dir, resource_dir = setup_dirs(config)
     directories = {recipe_dir_name: recipe_dir,
                    misc_dir_name: misc_dir,
                    resource_dir_name: resource_dir}
-
-    # Write default values
-    with open(defaults_file_path, 'w') as f:
-        config.write(f)
 
     # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024>
     #   ...without type checker complains...
@@ -87,7 +86,7 @@ def start():
         recipes = tuple(os.path.join(recipe_dir, recipe_file) for recipe_file in args.take)
 
     if len(recipes) > 0:
-        main.main(recipes, directories)
+        main.main(recipes, directories, config)
 
     if args.pdf:
         yaml2pdf.yaml2pdf(args.pdf, recipe_dir)
