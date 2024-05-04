@@ -6,18 +6,16 @@ todo.md
 # 'Selection' is a symlink
 Selection
 hooks/
-2024/
 Rezepte.md
-out/
 # Ignore files, directories and links
 *.pdf
-pdf
+pdf/
 defaults.ini
 recipes/
-res/
 misc/
 build/
 grocery_shopper.egg-info/
 *.vim
 dist/
 .venv/
+.archive/
