@@ -11,7 +11,7 @@ version = "0.2.0"
 #     'PyYAML'
 # ]
 authors = [
-    { name = "PFeO", email="125358469+PhilippFeO@users.noreply.github.com"}
+    { name = "P_FeO", email="125358469+PhilippFeO@users.noreply.github.com"}
 ]
 description = "Let the computer choose your dishes and also shop the ingredients – automagically!"
 readme = "README.md"
