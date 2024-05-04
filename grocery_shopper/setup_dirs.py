@@ -11,10 +11,9 @@ def setup_dirs_helper(path: str) -> None:
         tmp_dir = os.path.join(path, v)
         try:
             os.makedirs(tmp_dir)
-        except OSError as ose:
-            # TODO: Logging <12-04-2024>
-            logging.info(
-                f"(Re)move (possible old) {tmp_dir} or change location completely.\nOriginal Error: {str(ose)}")
+        except OSError:
+            logging.warning(
+                f"(Re)move (possible old) directoy '{tmp_dir}' or change location completely.")
             sys.exit(2)
 
 
