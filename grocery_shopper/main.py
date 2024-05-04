@@ -21,8 +21,8 @@ def main(recipes: 'Iterable[str]',
     """
     Conducts shopping process. Either callable with number of recipes to randomly select some or with list of recipes.
     """
-    firefox_profile = config['General']['firefox_profile']
-    general_dir = config['General']['dir']
+    firefox_profile = config['general']['firefox_profile']
+    general_dir = config['general']['dir']
 
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>

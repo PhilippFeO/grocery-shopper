@@ -25,7 +25,7 @@ def setup_dirs(config: configparser.ConfigParser) -> dict[str, str]:
     """
     # Check if directory was already set, ie program was ran at least once
     try:
-        general_dir = config['General']['dir']
+        general_dir = config['general']['dir']
     # If not (probably on first run), then set it to CWD
     # Except block entered on first run => directories don't exists
     except (configparser.NoSectionError, configparser.NoOptionError, KeyError):
@@ -33,6 +33,6 @@ def setup_dirs(config: configparser.ConfigParser) -> dict[str, str]:
         # Call to setup_dirs_helper() has to come before setting config
         # The function might exit, then no values should be written to config
         setup_dirs_helper(general_dir)
-        config['General']['dir'] = os.path.expanduser(general_dir)
+        config['general']['dir'] = os.path.expanduser(general_dir)
 
     return directories

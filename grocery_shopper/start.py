@@ -24,7 +24,7 @@ def start():
         with open(defaults_file_path) as config_file:
             config.read_file(config_file)
     except FileNotFoundError:
-        config['General'] = {}
+        config['general'] = {}
 
     p = argparse.ArgumentParser(__file__)
     p.add_argument('-n', '--num_recipes',
@@ -55,12 +55,12 @@ def start():
     key_firefox_profile = 'firefox_profile'
     if args.firefox_profile is None:
         try:
-            config['General'][key_firefox_profile]
+            config['general'][key_firefox_profile]
         except (configparser.NoSectionError, configparser.NoOptionError, KeyError):
             logging.error('No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
             sys.exit(1)
     else:
-        config['General'][key_firefox_profile] = os.path.expanduser(args.firefox_profile)
+        config['general'][key_firefox_profile] = os.path.expanduser(args.firefox_profile)
         # Write default values
         with open(defaults_file_path, 'w') as f:
             config.write(f)

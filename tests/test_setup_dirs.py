@@ -13,7 +13,7 @@ def isdir_helper(path):
 @pytest.fixture
 def config() -> configparser.ConfigParser:
     config = configparser.ConfigParser()
-    config.add_section('General')
+    config.add_section('general')
     return config
 
 
@@ -44,7 +44,7 @@ def test_setup_dirs_first_run(monkeypatch, tmp_path, config):
 
     setup_dirs(config)
 
-    assert config['General']['dir'] == str(tmp_path)
+    assert config['general']['dir'] == str(tmp_path)
     isdir_helper(tmp_path)
 
 
@@ -52,6 +52,6 @@ def test_setup_dirs_second_run(tmp_path, config):
     """Simulates a second (or third, fourth, ...) run, ie. dir in config is set and necessary directories exists.
     """
     # Set config
-    config['General']['dir'] = str(tmp_path)
+    config['general']['dir'] = str(tmp_path)
 
     assert directories == setup_dirs(config)
