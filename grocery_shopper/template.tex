@@ -1,4 +1,12 @@
-\documentclass[fontsize=15pt,paper=a4]{scrdoc}
+\documentclass[fontsize=15pt,paper=a4]{scrartcl}
+
+\usepackage{scrlayer-scrpage}
+\cfoot{}% clear the center footer, ie. the page number
+% Remove Italics in footer
+\addtokomafont{pagefoot}{\normalfont}
+% ofoot = Outer FOOTer, ie right/left margin depending on odd/even page
+\ofoot*{\input{/tmp/title.tex}}
+\setlength{\footheight}{25.0pt}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc} % UTF-8-Codierung
@@ -9,7 +17,8 @@
 \usepackage[left=1.5cm,
             top=1.5cm,
             right=1.5cm,
-            bottom=1.5cm]{geometry}
+            % bottom=3.5cm]{geometry} % Funktioniert mit Höhe 24
+            bottom=2.5cm]{geometry} % Too small moves footer outside of page
 \usepackage{xcolor} % Print optional ingredients in gray 
 
 % Monospace font as default everywhere
@@ -17,8 +26,6 @@
 \renewcommand{\familydefault}{\ttdefault}
 \addtokomafont{section}{\ttfamily\Large\centering}
 \addtokomafont{subsection}{\ttfamily\large\centering}
-
-\pagenumbering{gobble} % No page numbering
 
 % Latex trennt dicktengleiche Schriften nicht, sodass über den Rand hinaus geschrieben wird. Das wird damit verhindert (aber was „sloppy“ genau macht, weiß ich auch nicht)
 \sloppy
@@ -29,13 +36,15 @@
 \begin{center}
     \scriptsize \today
 \end{center}
+%
 \subsection*{Zutaten}
 \begin{tabularx}{\textwidth}{XX}
     \input{/tmp/ingredients.tex}
 \end{tabularx}
-
+%
 \subsection*{Zubereitung}
 \begin{enumerate}
     \input{/tmp/preparation.tex}
 \end{enumerate}
+%
 \end{document}
