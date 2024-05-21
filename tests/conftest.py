@@ -28,13 +28,13 @@ def ings_with_cu():
                        2,
                        optional=True,
                        category='Gemüse',
-                       url=['https://de.wikipedia.org/wiki/Gurke'],
+                       url='https://de.wikipedia.org/wiki/Gurke',
                        meal='misc-test')
     brombeere = Ingredient('Brombeere',
                            '150g',
                            optional=True,
                            category='Gemüse',
-                           url=['https://de.wikipedia.org/wiki/Brombeere'],
+                           url='https://de.wikipedia.org/wiki/Brombeere',
                            meal='misc-test')
     return kirsche, paprika, gurke, brombeere
 
