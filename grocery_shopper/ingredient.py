@@ -11,7 +11,7 @@ class Ingredient:
                  meal: str = 'N/A-MEAL'):
         self.name: str = name
         self.quantity: str = str(quantity)  # may have one of the following form: 2 (pieces), 250g, 1 Block => string necessary
-        self.optional: str = optional
+        self.optional: bool = optional
         self.category = category
         self.url = url
         self.meal = meal
