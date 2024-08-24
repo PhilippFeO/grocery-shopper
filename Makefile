@@ -52,5 +52,5 @@ vtest:
 
 # ─── pdf ──────────
 pdf:
-	grocery_shopper --make-pdf ./recipes/Testgericht.yaml
+	grocery_shopper --pdf ./recipes/Testgericht.yaml
 	okular ./recipes/pdf/Testgericht.pdf
