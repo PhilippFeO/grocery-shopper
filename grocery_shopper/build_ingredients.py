@@ -1,14 +1,16 @@
-import yaml
 import logging
-from grocery_shopper.read_csv import read_csv
 from typing import Callable
+
+import yaml
+
 from grocery_shopper.ingredient import Ingredient
+from grocery_shopper.read_csv import read_csv
 
 
 def read_icu_file(icu_file: str) -> Callable[[str], tuple[list[Ingredient], list[Ingredient]]]:
-    """
-    Uses a closure. Reads the ingredient_category_url.csv file and returns a function. This function has access
-    to the constructed dictionary.
+    """Read the ingredient_category_url.csv file and return a function.
+
+    This function has access to the constructed dictionary.
     """
     icu_dict: dict[str, tuple[str, str]] = {}
     try:
@@ -18,9 +20,7 @@ def read_icu_file(icu_file: str) -> Callable[[str], tuple[list[Ingredient], list
         pass
 
     def build_ingredients_inner(recipe_file: str) -> tuple[list[Ingredient], list[Ingredient]]:
-        """
-        Builds the ingredient list of a recipe by parsing the yaml file and adding
-        the information from the corresponding CSV files, namely `category` and `url`.
+        """Build the ingredient list of a recipe by parsing the yaml file and adding the information from the corresponding CSV files, namely `category` and `url`.
 
         The function will return two lists, the first holding `Ingredient`s with valid `category` and `url` attributes, the latter with predefined ones.
         This necessary to ask the user for completing the data.
@@ -29,7 +29,7 @@ def read_icu_file(icu_file: str) -> Callable[[str], tuple[list[Ingredient], list
         Additionally, this surely becomes necessary because nobody can guarantee that an URL will stay valid. The vendor might change it.
         """
         recipe_data = None
-        with open(recipe_file, 'r') as file:
+        with open(recipe_file) as file:
             recipe_data = yaml.safe_load(file)
         recipe_name = recipe_data.get('recipe', [])[0]['name']
 

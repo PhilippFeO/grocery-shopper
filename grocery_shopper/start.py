@@ -3,12 +3,11 @@ import configparser
 import logging
 import os
 import sys
-from grocery_shopper import main
-from grocery_shopper.setup_dirs import setup_dirs
-from grocery_shopper import yaml2pdf
-from grocery_shopper.vars import defaults_file, directories
-from grocery_shopper.select_recipes import select_recipes
 
+from grocery_shopper import main, yaml2pdf
+from grocery_shopper.select_recipes import select_recipes
+from grocery_shopper.setup_dirs import setup_dirs
+from grocery_shopper.vars import RECIPE_DIR, defaults_file, directories
 
 logging.basicConfig(level=logging.WARNING,
                     format='[%(levelname)s: %(asctime)s] %(message)s',
