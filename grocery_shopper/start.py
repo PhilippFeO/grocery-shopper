@@ -2,6 +2,7 @@ import argparse
 import configparser
 import logging
 import os
+from pathlib import Path
 import sys
 
 from grocery_shopper import main, yaml2pdf
@@ -67,14 +68,23 @@ def start():
     _ = setup_dirs(config, defaults_file_path)
     # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024>
     #   ...without type checker complains...
-    recipes = ()
+    from random import choice
+    # TODO: Allow user to define fixed meals <24-08-2024>
+    if Path(RECIPE_DIR/'Abendbrot.yaml').is_file() \
+            and Path(RECIPE_DIR/'Türkisches_Abendbrot.yaml').is_file():
+        recipes = (
+            choice((RECIPE_DIR/'Abendbrot.yaml',  # noqa: S311
+                    RECIPE_DIR/'Türkisches_Abendbrot.yaml'))
+        )
+    else:
+        recipes = ()
     if args.num_recipes:
         if args.take and args.num_recipes > 0:
             recipes = tuple(os.path.join(directories['recipe_dir'],
                                          recipe_file)
-                            for recipe_file in args.take) \
-                + tuple(select_recipes(args.num_recipes,
-                                       directories['recipe_dir']))
+                            for recipe_file in args.take)
+            + tuple(select_recipes(args.num_recipes,
+                                   directories['recipe_dir']))
         elif args.num_recipes > 0:
             recipes = tuple(select_recipes(args.num_recipes, directories['recipe_dir']))
     elif args.take:
