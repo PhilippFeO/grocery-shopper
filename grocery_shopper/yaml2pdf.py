@@ -1,11 +1,13 @@
-import yaml
-import shutil
-import os
-import subprocess
 import logging
+import os
+import shutil
+import subprocess
+from itertools import zip_longest
 from math import ceil
 from pathlib import Path
-from itertools import zip_longest
+
+import yaml
+
 from grocery_shopper.ingredient import Ingredient
 
 
@@ -69,7 +71,7 @@ def read_recipe(file_path):
 
 
 def yaml2pdf(recipe_yamls: list[str],
-             recipe_dir: str):
+             recipe_dir: Path):
     outdir = "/tmp/grocery_shopper/"
     for recipe_file in recipe_yamls:
         recipe: Recipe = read_recipe(os.path.join(recipe_dir, recipe_file))

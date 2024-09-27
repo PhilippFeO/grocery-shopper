@@ -2,13 +2,14 @@ import argparse
 import configparser
 import logging
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
+from random import choice
 
 from grocery_shopper import main, yaml2pdf
 from grocery_shopper.select_recipes import select_recipes
 from grocery_shopper.setup_dirs import setup_dirs
-from grocery_shopper.vars import RECIPE_DIR, defaults_file, directories
+from grocery_shopper.vars import FIXED_MEALS, RECIPE_DIR, defaults_file, directories
 
 logging.basicConfig(level=logging.WARNING,
                     format='[%(levelname)s: %(asctime)s] %(message)s',
@@ -27,13 +28,13 @@ def start():
         config['general'] = {}
 
     p = argparse.ArgumentParser(__file__)
-    p.add_argument('-n', '--num_recipes',
+    p.add_argument('-n', '--num-recipes',
                    help='Number of recipes',
                    type=int)
     p.add_argument('--dir',
                    help='Top level directory. Here will all files and directories be saved.',
                    type=str)
-    p.add_argument('--firefox_profile',
+    p.add_argument('--firefox-profile',
                    help='Path to the firefox profile.',
                    type=str)
     p.add_argument(
@@ -68,33 +69,29 @@ def start():
     _ = setup_dirs(config, defaults_file_path)
     # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024>
     #   ...without type checker complains...
-    from random import choice
     # TODO: Allow user to define fixed meals <24-08-2024>
-    if Path(RECIPE_DIR/'Abendbrot.yaml').is_file() \
-            and Path(RECIPE_DIR/'Türkisches_Abendbrot.yaml').is_file():
-        recipes = (
-            choice((RECIPE_DIR/'Abendbrot.yaml',  # noqa: S311
-                    RECIPE_DIR/'Türkisches_Abendbrot.yaml'))
-        )
+    if any(fixed_meal.is_file() for fixed_meal in FIXED_MEALS):
+        recipes = [
+            choice(FIXED_MEALS),  # noqa: S311
+        ]
     else:
-        recipes = ()
+        recipes = []
+    if args.pdf:
+        yaml2pdf.yaml2pdf(args.pdf, RECIPE_DIR)
     if args.num_recipes:
         if args.take and args.num_recipes > 0:
-            recipes = tuple(os.path.join(directories['recipe_dir'],
-                                         recipe_file)
-                            for recipe_file in args.take)
-            + tuple(select_recipes(args.num_recipes,
-                                   directories['recipe_dir']))
+            recipes += [RECIPE_DIR/Path(recipe_file)
+                        for recipe_file in args.take] \
+                + list(select_recipes(args.num_recipes, RECIPE_DIR, recipes))
         elif args.num_recipes > 0:
-            recipes = tuple(select_recipes(args.num_recipes, directories['recipe_dir']))
+            recipes += list(select_recipes(args.num_recipes, RECIPE_DIR, recipes))
     elif args.take:
-        recipes = tuple(os.path.join(directories['recipe_dir'], recipe_file) for recipe_file in args.take)
+        recipes += [RECIPE_DIR/recipe_file for recipe_file in args.take]
 
-    if len(recipes) > 0:
+    # To prevent execution if no meal was selected, fi. by providing '--pdf'
+    # recipes always contains the FIXED_MEALS (if they are any)
+    if len(recipes) > len(FIXED_MEALS):
         main.main(recipes, directories, config)
-
-    if args.pdf:
-        yaml2pdf.yaml2pdf(args.pdf, directories['recipe_dir'])
 
 
 if __name__ == "__main__":

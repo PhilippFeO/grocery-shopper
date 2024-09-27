@@ -11,3 +11,8 @@ RECIPE_DIR = Path('./recipes')
 MISC_DIR = Path('./misc')
 RESOURCE_DIR = Path('./.resources')
 ARCHIVE_DIR = Path('./.archive')
+
+FIXED_MEALS: list[Path] = [
+    RECIPE_DIR/'Abendbrot.yaml',
+    RECIPE_DIR/'Türkisches_Abendbrot.yaml',
+]

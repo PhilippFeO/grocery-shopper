@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from grocery_shopper.ingredient import Ingredient
 
 
-def main(recipes: 'Iterable[str]',
+def main(recipes: 'Iterable[Path]',
          directories: dict[str, str],
          config: 'ConfigParser'):
     """Conducts shopping process. Either callable with number of recipes to randomly select some or with list of recipes."""
