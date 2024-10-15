@@ -4,15 +4,11 @@ import os
 import random
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from grocery_shopper.vars import FIXED_MEALS
 
-if TYPE_CHECKING:
-    from collections.abc import Iterable
 
-
-def select_recipes(num_recipes, recipe_dir, recipes: list[Path]) -> "Iterable[Path]":
+def select_recipes(num_recipes, recipe_dir, recipes: list[Path]) -> list[Path]:
     """Randomly selects submitted number of recipes.
 
     :param int num_recipes: Number of recipes

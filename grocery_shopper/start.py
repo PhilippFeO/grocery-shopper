@@ -81,8 +81,8 @@ def start():
     if args.num_recipes:
         if args.take and args.num_recipes > 0:
             recipes += [RECIPE_DIR/Path(recipe_file)
-                        for recipe_file in args.take] \
-                + list(select_recipes(args.num_recipes, RECIPE_DIR, recipes))
+                        for recipe_file in args.take]
+            recipes += select_recipes(args.num_recipes, RECIPE_DIR, recipes)
         elif args.num_recipes > 0:
             recipes += list(select_recipes(args.num_recipes, RECIPE_DIR, recipes))
     elif args.take:
