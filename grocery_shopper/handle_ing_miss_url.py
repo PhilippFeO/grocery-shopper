@@ -39,7 +39,7 @@ def query_for_url(ings_miss_cu,
 def handle_ing_miss_cu(ings_miss_cu: list[Ingredient],
                        final_ingredients: list[Ingredient],
                        icu_file: str,
-                       firefox_profile: str) -> tuple[str, ...]:
+                       firefox_profile: str) -> list[str]:
     """
     Initial query to give the opportunity to add `category` and `url` to the `Ingredient`s in `ings_miss_cu`.
     The `Ingredient`s are listed before user input is parsed. After all Categories and URLs were collected, they will be appended to the `icu_file` ([i]ngredient, [c]ategory, [u]rl).

@@ -67,7 +67,7 @@ def main(recipes: 'Iterable[Path]',
     with open(shopping_list_file, 'w') as slf:
         # for partial_shopping_list in shopping_list_str:
         #     slf.write(partial_shopping_list)
-        slf.writelines((f'{partial_shopping_list}\n' for partial_shopping_list in shopping_list_str))
+        slf.writelines(f'{partial_shopping_list}\n' for partial_shopping_list in shopping_list_str)
 
     # Open shopping list in $EDITOR to modify it
     # (some ingredients may already be in stock, like salt, so we can delete/don't have to buy it)
@@ -91,9 +91,8 @@ def main(recipes: 'Iterable[Path]',
     # Print and save sorted final shopping list
     final_ingredients_sorted = sorted(final_ingredients,
                                       key=lambda ingredient: ingredient.name)
-    print("\nFinal shopping list:")
-    print(make_table(final_ingredients_sorted),
-          sep='\n',
+    print("\nFinal shopping list:")  # noqa: T201
+    print(make_table(final_ingredients_sorted),  # noqa: T201
           end='\n')
     with open(shopping_list_file, 'w') as slf:
         slf.write(make_table(final_ingredients_sorted,
@@ -101,13 +100,15 @@ def main(recipes: 'Iterable[Path]',
 
     # Archive shopping list and recipes
     # Return values is mainly for unit testing
-    _ = archive_contents(shopping_list_file,
-                         general_dir=general_dir,
-                         recipe_paths=recipes)
+    archive_contents(shopping_list_file,
+                     general_dir=general_dir,
+                     recipe_paths=recipes)
 
     # Open firefox with specific profile
     # subpress warnings
     firefox = f"firefox --profile {firefox_profile}"
+    # Add checkout link (to save time and avoid accidental closing of the browser window)
+    urls.append('https://shop.rewe.de/checkout/basket')
     subprocess.run([*firefox.split(' '), *urls], stderr=subprocess.DEVNULL)
 
     print('\n\nEnjoy your meals and saved time! :)')

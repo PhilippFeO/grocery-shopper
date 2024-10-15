@@ -1,9 +1,10 @@
+import logging
 import os
 import shutil
-import logging
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
+
 from grocery_shopper.vars import directories
 
 if TYPE_CHECKING:
@@ -12,8 +13,9 @@ if TYPE_CHECKING:
 
 def create_archive_dir(recipe_paths: 'Iterable[str]',
                        archive_location: str):
-    """
-    Helper function which creates the a directory 'yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/'.
+    """Create the a directory 'yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/'.
+
+    Helper function.
 
     :recipe_paths: Iterable with the paths to the yaml files of the recipes.
     :archive_location: Directory, where recipes/, misc/ and .resources/ are
@@ -33,9 +35,7 @@ def create_archive_dir(recipe_paths: 'Iterable[str]',
 
 
 def copy_shopping_list(shopping_list_file: str, archive_dir_path: str) -> str:
-    """
-    Copy shopping list into archive directory.
-    """
+    """Copy shopping list into archive directory."""
     archive_dir_name = os.path.basename(archive_dir_path)
     shopping_list_dst = os.path.join(archive_dir_path, f'{archive_dir_name}.txt')
     shutil.copy(shopping_list_file, shopping_list_dst)
@@ -45,9 +45,7 @@ def copy_shopping_list(shopping_list_file: str, archive_dir_path: str) -> str:
 
 
 def create_convenience_symlink(archive_dir_path: str):
-    """
-    Creates a symlink 'Selection' in `recipe_dir` for convenience, ie. having direct access to the selected recipes and shopping list.
-    """
+    """Create a symlink 'Selection' in `recipe_dir` for convenience, ie. having direct access to the selected recipes and shopping list."""
     temp_link = (link_name := 'Selection') + ".new"
     try:
         os.remove(link_name)
@@ -59,9 +57,9 @@ def create_convenience_symlink(archive_dir_path: str):
 
 def archive_contents(shopping_list_file: str,
                      general_dir: str,
-                     recipe_paths: 'Iterable[str]') -> list[str]:
-    """
-    Save shopping list to yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/yyyy-mm-dd-recipes[0]-...-recipes[n].txt.
+                     recipe_paths: 'Iterable[Path]') -> list[str]:
+    """Save shopping list to yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/yyyy-mm-dd-recipes[0]-...-recipes[n].txt.
+
     Create sym links of the used recipes next to it to have all resources close at hand.
 
     :param shopping_list_file: Name of the shopping list file.
