@@ -48,14 +48,16 @@ def select_recipes(num_recipes, recipe_dir, recipes: list[Path]) -> "Iterable[Pa
         print('Proceed: yes/y\n',
               f'Reselect: {"/".join(str(i) for i in range(num_recipes+1))} (0 = all)',
               sep='')
+
         # Check for admissible inputs
-        admissible = ', '.join(['yes', 'y', 'all'] + [str(i) for i in range(num_recipes+1)])
+        admissible = {'yes', 'y', 'all'} | {str(i) for i in range(num_recipes+1)}
         while (user_input := input("Input: ").lower()) not in admissible:
             print(f"Invalid input. Please enter one of the following:\n\t{admissible}")
+
         # Asses user input
         if user_input in {'yes', 'y'}:
             break
-        elif user_input in {'0', 'all'}:
+        if user_input in {'0', 'all'}:
             recipe_indices = random.sample(range(num_files), num_recipes)
             selection = [Path(yaml_files[i]) for i in recipe_indices]
         # User inserted a valid number
