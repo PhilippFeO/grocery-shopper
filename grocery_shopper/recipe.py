@@ -3,14 +3,42 @@ from pathlib import Path
 import yaml
 
 
+# TODO(Philipp): Rewrite as `dataclass` <01-01-2025>
 class Ingredient:
-    def __init__(self, name: str, quantity: str, optional: bool = False):  # noqa: FBT001, FBT002
-        self.name = name
-        self.quantity = quantity
-        self.optional = optional
+    def __init__(  # noqa: PLR0913
+        self,
+        name: str,
+        quantity: str,
+        optional: bool = False,  # noqa: FBT001, FBT002
+        category: str = 'N/A-CATEGORY',
+        url: str = 'N/A-URL',
+        meal: str = 'N/A-MEAL',
+    ):
+        self.name: str = name
+        # may have one of the following form: 2 (pieces), 250g, 1 Block => string necessary
+        self.quantity: str = quantity
+        self.optional: bool = optional
+        self.category = category
+        self.url = url
+        self.meal = meal
 
-    def __repr__(self):
-        return f'<{self.name}: {self.quantity!r}, {str(self.optional)[0]}>'
+    def __eq__(self, other) -> bool:
+        if isinstance(other, Ingredient):
+            return (
+                self.name == other.name
+                and self.quantity == other.quantity
+                and self.optional == other.optional
+                and self.category == other.category
+                and self.meal == other.meal
+            )
+        return False
+
+    def __hash__(self):
+        """Necessary for tests, especially for the use of collections.Counter()."""
+        return hash((self.name, self.quantity, self.optional, self.category, self.meal))
+
+    def __repr__(self) -> str:
+        return f'Ingredient(name={self.name!r},\nquantity={self.quantity!r},\noptional={self.optional!r},\ncategory={self.category!r},\nurl={self.url!r},\nmeal={self.meal!r})'
 
 
 class PreparationStep:
@@ -31,7 +59,7 @@ class Recipe:
         # Parse the YAML data
         yaml_data = yaml.safe_load(recipe_yaml.read_text())
 
-        self.name = yaml_data['recipe']['name']
+        self.name = yaml_data['recipe'][0]['name']
         self.ingredients = tuple(
             Ingredient(**ingredient) for ingredient in yaml_data['ingredients']
         )
@@ -48,7 +76,8 @@ class Recipe:
 
 
 if __name__ == '__main__':
-    recipe_file = Path('./recipes/Spätzle.yaml')
-
-    # Create Recipe instances
-    print(Recipe(recipe_file))
+    recipe_file = Path(
+        '/home/philipp/programmieren/grocery-shopper/recipes/Spätzle.yaml',
+    )
+    recipe = Recipe(recipe_file)
+    print(recipe)  # noqa: T201
