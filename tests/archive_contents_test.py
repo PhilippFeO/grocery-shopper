@@ -28,7 +28,7 @@ def test_create_convenience_symlink():
     assert Path('Selection').is_symlink()
 
 
-@pytest.mark.xfail(reason='Test needs PDF files of the recipes.')
+@pytest.mark.skip(reason='Test needs PDF files of the recipes.')
 def test_archive_contents(tmp_path, recipes):
     """Test function for `archive_contents()`."""
     symlinked_files = archive_contents(shopping_list_file, str(tmp_path), recipes)
