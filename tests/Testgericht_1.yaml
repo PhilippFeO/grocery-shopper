@@ -1,0 +1,26 @@
+recipe:
+  - name: Testgericht 1
+ingredients:
+  - name: Spätzle
+    quantity: 1 kg
+  - name: Zwiebel
+    quantity: 1-2
+  - name: Spätzlekäse gerieben
+    quantity: 1 Pkg.
+  - name: Zucchini
+    quantity: 1/2
+  - name: Paprika rot
+    quantity: 1
+  - name: Champignons
+    quantity: bel.
+  - name: Salz
+    quantity: 1 Prise
+  - name: Pfeffer
+    quantity: bel.
+  - name: Knoblauch
+    quantity: 1 Zehe
+    optional: true
+preparation:
+  - Gemüse klein schneiden, alles anschwitzen
+  - Spätzle hinzugeben und anbraten bis sie durch/braun sind.
+  - Herd ausschalten, Käse unterheben

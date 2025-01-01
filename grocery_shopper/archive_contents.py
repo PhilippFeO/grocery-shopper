@@ -3,15 +3,23 @@ import os
 import shutil
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
-from grocery_shopper.vars import directories
+from grocery_shopper.vars import ARCHIVE_DIR
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from grocery_shopper.recipe import Recipe
 
 
-def create_archive_dir(recipe_paths: 'Iterable[str]', archive_location: str):
+class YamlPdf(NamedTuple):
+    yaml_path: Path
+    pdf_path: Path
+
+
+def create_archive_dir(
+    recipes: list['Recipe'],
+    archive_location: str,
+) -> Path:
     """Create the a directory 'yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/'.
 
     Helper function.
@@ -23,42 +31,53 @@ def create_archive_dir(recipe_paths: 'Iterable[str]', archive_location: str):
     current_date = datetime.now().strftime('%Y-%m-%d')
 
     # Create subdirectory with the specified scheme
-    recipe_names = [Path(recipe).stem for recipe in recipe_paths]
+    recipe_names = [recipe.name_with_underscore for recipe in recipes]
     archived_shopping_list_name = f'{"-".join((current_date, *recipe_names))}'
-    archive_dir_path = os.path.join(
-        archive_location, directories['archive_dir'], archived_shopping_list_name
+    archive_dir_path = Path(
+        archive_location,
+        ARCHIVE_DIR,
+        archived_shopping_list_name,
     )
-    os.makedirs(archive_dir_path, exist_ok=True)
+    archive_dir_path.mkdir(parents=True)
 
     return archive_dir_path
 
 
-def copy_shopping_list(shopping_list_file: str, archive_dir_path: str) -> str:
+def copy_shopping_list(
+    shopping_list_file: Path,
+    archive_dir_path: Path,
+) -> Path:
     """Copy shopping list into archive directory."""
-    archive_dir_name = os.path.basename(archive_dir_path)
-    shopping_list_dst = os.path.join(archive_dir_path, f'{archive_dir_name}.txt')
+    shopping_list_dst = Path(archive_dir_path, f'{archive_dir_path.name}.txt')
     shutil.copy(shopping_list_file, shopping_list_dst)
-    logging.info(
-        f"File '{shopping_list_file}' copied to '{shopping_list_dst}' successfully."
+    msg = (
+        f"File '{shopping_list_file}' copied to '{shopping_list_dst}' successfully.",
     )
+    logging.info(msg)
 
     return shopping_list_dst
 
 
-def create_convenience_symlink(archive_dir_path: str):
+def create_convenience_symlink(archive_dir_path: Path):
     """Create a symlink 'Selection' in `recipe_dir` for convenience, ie. having direct access to the selected recipes and shopping list."""
-    temp_link = (link_name := 'Selection') + '.new'
+    link_name = 'Selection'
+    link = Path(f'{link_name}')
+    temp_link = Path(f'{link_name}.new')
     try:
-        os.remove(link_name)
+        link.unlink()
     except FileNotFoundError as fnfe:
-        logging.error(f'Error while removing link "{link_name}":\n\t{fnfe}')
+        msg = f'Error while removing link "{link}":\n\t{fnfe}'
+        logging.exception(msg)
+    # TODO(Philipp): Maybe doesn't work <01-01-2025>
     os.symlink(f'{archive_dir_path}', temp_link)
-    os.rename(temp_link, link_name)
+    temp_link.rename(link_name)
 
 
 def archive_contents(
-    shopping_list_file: Path, general_dir: str, recipe_paths: 'Iterable[Path]'
-) -> list[str]:
+    shopping_list_file: Path,
+    general_dir: str,
+    recipes: list['Recipe'],
+) -> list[YamlPdf]:
     """Save shopping list to yyyy/yyyy-mm-dd-recipes[0]-...-recipes[n]/yyyy-mm-dd-recipes[0]-...-recipes[n].txt.
 
     Create sym links of the used recipes next to it to have all resources close at hand.
@@ -73,29 +92,31 @@ def archive_contents(
     # TODO: I dont like how the whole paths are assembled <06-04-2024>
     #   fi: Path(recipe_path).name
     #       Second symlink (symlink to the pdf)
-    archive_dir_path: str = create_archive_dir(
-        recipe_paths=recipe_paths, archive_location=general_dir
+    archive_dir_path: Path = create_archive_dir(
+        recipes=recipes,
+        archive_location=general_dir,
     )
     copy_shopping_list(shopping_list_file, archive_dir_path)
     create_convenience_symlink(archive_dir_path)
 
-    # recipe_file scheme: file.ext
-    symlinked_files: list[str] = []
-    for recipe_file, recipe_path in zip(
-        (Path(recipe_path).name for recipe_path in recipe_paths), recipe_paths
-    ):
-        dst_yaml = os.path.join(archive_dir_path, recipe_file)
-        dst_pdf = os.path.join(
-            archive_dir_path, (recipe_file_pdf := recipe_file.replace('yaml', 'pdf'))
+    symlinked_files: list[YamlPdf] = []
+    for recipe in recipes:
+        dst_yaml = Path(archive_dir_path, recipe.name_with_underscore)
+        dst_pdf = Path(
+            archive_dir_path,
+            (recipe_file_pdf := str(recipe.path).replace('yaml', 'pdf')),
         )
         try:
-            os.symlink(recipe_path, dst_yaml)
+            os.symlink(recipe.path, dst_yaml)
             os.symlink(
-                os.path.join(os.path.dirname(recipe_path), 'pdf', recipe_file_pdf),
+                Path(recipe.path.parent, 'pdf', recipe_file_pdf),
                 dst_pdf,
             )
-            symlinked_files.extend((dst_yaml, dst_pdf))
+            symlinked_files.append(
+                YamlPdf(dst_yaml, dst_pdf),
+            )
         except FileExistsError as fee:
-            logging.error(f'Error Message: {fee}')
+            msg = f'Error Message: {fee}'
+            logging.exception(msg)
 
     return symlinked_files

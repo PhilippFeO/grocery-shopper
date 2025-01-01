@@ -1,0 +1,20 @@
+recipe:
+  - name: Testgericht 0
+ingredients:
+  - name: Pizzateig
+    quantity: 1
+  - name: Käse gerieben
+    quantity: 1
+  - name: Peperoni
+    quantity: 1 Glas
+  - name: Schafkäse
+    quantity: 1
+  - name: Schimmelkäse
+    quantity: 1
+  - name: Zucchini
+    quantity: 1/2
+preparation:
+  - 1. Pizzateig ausrollen und mit Tomatensoße bestreichen
+  - 2. Gemüse schneiden
+  - 3. Käse verteilen
+  - 4. 15-20min bei 200°C in den Backofen, am Ende 3-4 Minuten mit „Pizzastufe“ für knusprigen Boden

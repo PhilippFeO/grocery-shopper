@@ -1,25 +1,28 @@
+import contextlib
 import glob
 import os
 import subprocess
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from grocery_shopper.archive_contents import archive_contents
-from grocery_shopper.build_ingredients import read_icu_file
 from grocery_shopper.handle_ing_miss_url import handle_ing_miss_cu
 from grocery_shopper.make_table import make_table
-from grocery_shopper.parse_edited_list import parse_edited_list
+from grocery_shopper.parse_edited_list import retrieve_required_ingredients
+from grocery_shopper.read_csv import read_csv
+from grocery_shopper.recipe import Recipe
+from grocery_shopper.vars import MISC_DIR, RESOURCE_DIR
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
     from configparser import ConfigParser
 
-    from grocery_shopper.ingredient import Ingredient
+    from grocery_shopper.recipe import Ingredient
 
 
-def main(recipes: 'Iterable[Path]',
-         directories: dict[str, str],
-         config: 'ConfigParser'):
+def main(
+    recipes: list['Recipe'],
+    config: 'ConfigParser',
+) -> None:
     """Conducts shopping process. Either callable with number of recipes to randomly select some or with list of recipes."""
     firefox_profile = config['general']['firefox_profile']
     general_dir = config['general']['dir']
@@ -27,47 +30,48 @@ def main(recipes: 'Iterable[Path]',
     # i=ingredient, c=category, u=url
     # TODO: csv files may contain error/bad formatted entries (ie. no int were int is ecpected); Check for consistency <05-01-2024>
     # TODO: Move path to config file <17-03-2024>
-    icu_file: str = os.path.join(general_dir, directories['resource_dir'], 'ingredient_category_url.csv')
+    icu_file: Path = Path(general_dir) / RESOURCE_DIR / 'ingredient_category_url.csv'
 
     # Superlist to store ingredients from all files
     all_ingredients: list[Ingredient] = []
     all_ings_missing_cu: list[Ingredient] = []
-    shopping_list_str = []
+    shopping_list_str: list[str] = []
 
-    # Instanciate closure
-    build_ingredients: Callable[[str], tuple[list[Ingredient], list[Ingredient]]] = read_icu_file(icu_file)
+    # File will be created in the following (programming flow, not here, s. handle_ing_miss_url.py)
+    icu_dict: dict[str, tuple[str, str]] = {}
+    with contextlib.suppress(FileNotFoundError):
+        icu_dict = read_csv(icu_file)
 
-    def collect_ingredients_helper(recipe_file):
-        # `valid_ingredients` have `category` and `url`
-        # `ings_missing_cu` miss `[c]ategory` and `[u]rl`
-        valid_ingredients, ings_missing_cu = build_ingredients(recipe_file)
-        all_ings_missing_cu.extend(ings_missing_cu)
-        return sorted(valid_ingredients + ings_missing_cu,
-                      key=lambda ingredient: ingredient.name)
+    # Assign `category` and `url`
+    # Collect ingredients without entry in the CSV
+    for recipe in recipes:
+        for ingredient in recipe.ingredients:
+            if ingredient.name in icu_dict:
+                ingredient.category = icu_dict[ingredient.name].category
+                ingredient.url = icu_dict[ingredient.name].url
+            else:
+                all_ings_missing_cu.append(ingredient)
 
-    # TODO: As exercise: parallelize reading/parsing the recipe.yaml <05-01-2024>
-    for recipe_file in recipes:
-        all_ingredients.extend(collect_ingredients_helper(recipe_file))
+    # Collect all ingredients to assemble shopping list string
+    for recipe in recipes:
+        all_ingredients += recipe.ingredients
     shopping_list_str.append(make_table(all_ingredients) + '\n' * 2)
 
-    misc_dir = os.path.join(general_dir, directories['misc_dir'])
+    misc_dir = Path(general_dir) / MISC_DIR
     # I want to add a destinct heading for each file in misc_dir misc.
     # Iterating over `sys.argv[1:] + misc_files` would only be possibe with various if-statements
     # because the CLI provided files don't get a "filename" heading like `misc_files` do.
     # To many if-statements affect readability, hence two for loops and helpfer function.
     for file in glob.glob(os.path.join(misc_dir, '*.yaml')):
-        misc_ingredients = collect_ingredients_helper(file)
-        all_ingredients.extend(misc_ingredients)
-        shopping_list_str.append(f'{Path(file).stem}:\n' +
-                                 make_table(misc_ingredients) +
-                                 '\n' * 2)
+        recipe = Recipe(Path(file))
+        all_ingredients += recipe.ingredients
+        shopping_list_str.append(
+            f'{Path(file).stem}:\n' + make_table(recipe.ingredients) + '\n' * 2,
+        )
 
     # Write the shopping list
-    shopping_list_file = 'shopping_list.txt'
-    with open(shopping_list_file, 'w') as slf:
-        # for partial_shopping_list in shopping_list_str:
-        #     slf.write(partial_shopping_list)
-        slf.writelines(f'{partial_shopping_list}\n' for partial_shopping_list in shopping_list_str)
+    shopping_list_file = Path('shopping_list.txt')
+    shopping_list_file.write_text('\n'.join(shopping_list_str))
 
     # Open shopping list in $EDITOR to modify it
     # (some ingredients may already be in stock, like salt, so we can delete/don't have to buy it)
@@ -78,37 +82,42 @@ def main(recipes: 'Iterable[Path]',
     else:
         subprocess.run([editor, shopping_list_file])
 
-    final_ingredients: list[Ingredient] = parse_edited_list(shopping_list_file, all_ingredients)
+    # Retrieve required ingredients from shopping list
+    final_ingredients: list[Ingredient] = retrieve_required_ingredients(
+        shopping_list_file,
+        all_ingredients,
+    )
 
     # Side effect: `Ingredient` instances in `final_ingredients` are now equipped with `url` attributes
     # => Makes printing with URL in the following possible
-    urls = handle_ing_miss_cu(all_ings_missing_cu,
-                              final_ingredients,
-                              icu_file,
-                              firefox_profile)
+    urls = handle_ing_miss_cu(
+        all_ings_missing_cu,
+        final_ingredients,
+        icu_file,
+        firefox_profile,
+    )
 
     # TODO: When printing give user the chance to reedit list <18-01-2024>
     # Print and save sorted final shopping list
-    final_ingredients_sorted = sorted(final_ingredients,
-                                      key=lambda ingredient: ingredient.name)
-    print("\nFinal shopping list:")  # noqa: T201
-    print(make_table(final_ingredients_sorted),  # noqa: T201
-          end='\n')
-    with open(shopping_list_file, 'w') as slf:
-        slf.write(make_table(final_ingredients_sorted,
-                             with_url=True))
+    final_ingredients.sort(
+        key=lambda ingredient: ingredient.name,
+    )
+    print('\nFinal shopping list:')
+    print(
+        make_table(final_ingredients),
+        end='\n',
+    )
+    shopping_list_file.write_text(make_table(final_ingredients, with_url=True))
 
     # Archive shopping list and recipes
     # Return values is mainly for unit testing
-    archive_contents(shopping_list_file,
-                     general_dir=general_dir,
-                     recipe_paths=recipes)
+    archive_contents(shopping_list_file, general_dir, recipes)
 
     # Open firefox with specific profile
     # subpress warnings
-    firefox = f"firefox --profile {firefox_profile}"
+    firefox = f'firefox --profile {firefox_profile}'
     # Add checkout link (to save time and avoid accidental closing of the browser window)
     urls.append('https://shop.rewe.de/checkout/basket')
-    subprocess.run([*firefox.split(' '), *urls], stderr=subprocess.DEVNULL)
+    subprocess.run([*firefox.split(' '), *urls], stderr=subprocess.DEVNULL, check=False)
 
     print('\n\nEnjoy your meals and saved time! :)')

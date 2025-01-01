@@ -55,17 +55,22 @@ class Recipe:
         assert (
             recipe_yaml.suffix == '.yaml'
         ), f'No yaml file was provided: {recipe_yaml}'
+        self.path: Path = recipe_yaml
 
         # Parse the YAML data
         yaml_data = yaml.safe_load(recipe_yaml.read_text())
 
         self.name = yaml_data['recipe'][0]['name']
+        self.name_with_underscore = self.name.replace(' ', '_')
 
         # If no 'ingredients' key, then `self.ingredients = []`
         self.ingredients = [
             Ingredient(**ingredient)
             for ingredient in yaml_data.setdefault('ingredients', [])
         ]
+        self.ingredients.sort(
+            key=lambda ingredient: ingredient.name,
+        )
 
         # If no 'preparation' key, then `self.preparation = []`
         self.preparation = [

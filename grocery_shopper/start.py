@@ -112,7 +112,7 @@ def start():
     ]
 
     # recipes always contains the FIXED_MEALS (if they are any)
-    main.main(recipes, directories, config)
+    main.main(recipes, config)
 
 
 if __name__ == '__main__':

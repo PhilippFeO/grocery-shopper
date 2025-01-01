@@ -1,4 +1,7 @@
-from grocery_shopper.ingredient import Ingredient
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from grocery_shopper.recipe import Ingredient
 
 
 # TODO: Add emtpy line after 10 rows for better overview <16-03-2024>
@@ -9,7 +12,7 @@ row_names = ['?', 'Name', 'Menge', 'Kategorie', 'Gericht']
 name_col_num = row_names.index('Name') + 1
 
 
-def make_table(ingredients: list[Ingredient], with_url: bool = False) -> str:
+def make_table(ingredients: list['Ingredient'], with_url: bool = False) -> str:
     """Transform provided list of `Ingredient`s into a table.
 
     :param list[Ingredient] ingredients: Ingredients to print as table
@@ -17,11 +20,10 @@ def make_table(ingredients: list[Ingredient], with_url: bool = False) -> str:
     :returns: The table as string
     """
     data = [row_names]
-    data.extend(['1' if ing.optional else '•',
-                 ing.name,
-                 ing.quantity,
-                 ing.category,
-                 ing.meal] for ing in ingredients)
+    data.extend(
+        ['1' if ing.optional else '•', ing.name, ing.quantity, ing.category, ing.meal]
+        for ing in ingredients
+    )
     if with_url:
         row_names.append('Verweis')
         # index 0 is `header`
@@ -35,7 +37,10 @@ def make_table(ingredients: list[Ingredient], with_url: bool = False) -> str:
     table_rows = []
     for row in data:
         table_rows.append(
-            ''.join(item.ljust(width + spacing) for item, width in zip(row, column_widths)).rstrip())
+            ''.join(
+                item.ljust(width + spacing) for item, width in zip(row, column_widths)
+            ).rstrip()
+        )
     # -1 due to `rstrip()`
     hline = '-' * (sum(column_widths) + (len(column_widths) - 1) * spacing)
     table_rows.insert(1, hline)
