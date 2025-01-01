@@ -24,7 +24,7 @@ def test_parse_edited_list(all_ingredients):
     # print(table)
     expected_final_ingredients: list[Ingredient] = filter_names(
         all_ingredients,
-        {'Orange', 'Erdbeere', 'Kirsche', 'Paprika', 'Kürbis', 'Brombeere'},
+        {'Orange', 'Erdbeere', 'Kirsche', 'Paprika', 'Rotkohl', 'Brombeere'},
     )
 
     final_ingredients: list[Ingredient] = retrieve_required_ingredients(

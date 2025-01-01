@@ -9,5 +9,5 @@
 Weiteres:
 ?   Name        Menge   Kategorie      Gericht
 --------------------------------------------------
-•   Kürbis      500g    N/A-CATEGORY   misc-test
+•   Rotkohl      500g    N/A-CATEGORY   misc-test
 1   Brombeere   150g    Gemüse         misc-test

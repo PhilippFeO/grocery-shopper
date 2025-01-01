@@ -1,35 +1,35 @@
 from pathlib import Path
+
 import pytest
 
-from grocery_shopper.ingredient import Ingredient
-from grocery_shopper.recipe import Recipe
+from grocery_shopper.recipe import Ingredient, Recipe
 
 
 @pytest.fixture
 def ings_missing_cu():
     orange = Ingredient(
         'Orange',
-        2,
+        '2',
         meal='Testgericht',
     )
     erdbeere = Ingredient(
         'Erdbeere',
-        5,
+        '5',
         meal='Testgericht',
     )
-    kürbis = Ingredient(
-        'Kürbis',
+    rotkohl = Ingredient(
+        'Rotkohl',
         '500g',
         meal='misc-test',
     )
-    return orange, erdbeere, kürbis
+    return orange, erdbeere, rotkohl
 
 
 @pytest.fixture
 def ings_with_cu():
     kirsche = Ingredient(
         'Kirsche',
-        16,
+        '16',
         optional=False,
         category='Obst',
         url='https://de.wikipedia.org/wiki/Vogelkirsche_(Baum)',
@@ -37,7 +37,7 @@ def ings_with_cu():
     )
     paprika = Ingredient(
         'Paprika',
-        1,
+        '1',
         optional=True,
         category='Gemüse',
         url='https://de.wikipedia.org/wiki/Paprika',
@@ -45,7 +45,7 @@ def ings_with_cu():
     )
     gurke = Ingredient(
         'Gurke',
-        2,
+        '2',
         optional=True,
         category='Gemüse',
         url='https://de.wikipedia.org/wiki/Gurke',
