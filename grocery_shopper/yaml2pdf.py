@@ -14,12 +14,13 @@ from grocery_shopper.ingredient import Ingredient
 class Recipe:
     def __init__(self, recipe_name, ingredients, preparation):
         self.recipe_name = recipe_name
-        self.ingredients: list[Ingredient] = [Ingredient(**ingredient)
-                                              for ingredient in ingredients]
-        self.preparation: list[str] = [step
-                                       .replace('„', '"`')
-                                       .replace('“', '"\'')
-                                       .replace('&', '\\&') for step in preparation]
+        self.ingredients: list[Ingredient] = [
+            Ingredient(**ingredient) for ingredient in ingredients
+        ]
+        self.preparation: list[str] = [
+            step.replace('„', '"`').replace('“', '"\'').replace('&', '\\&')
+            for step in preparation
+        ]
 
     def to_latex(self):
         # TODO: Write strings to pipe, read form pipe in latex file <06-02-2024>
@@ -32,14 +33,16 @@ class Recipe:
             # TODO: Adjust slice according to above comment <13-02-2024>
             #   Idea: 'preparation' object containing number and instruction separately
             # Works because Latex collapses multiple spaces (after `\item`) into one
-            preparation_file.writelines((f'\\item {step[3:]}\n' for step in self.preparation))
+            preparation_file.writelines(
+                (f'\\item {step[3:]}\n' for step in self.preparation)
+            )
 
         # Ingredients
         table_body = ''
 
         # Make optional ingredients gray
         def color_ingredient(ing: Ingredient | None) -> str:
-            """ Dye optional ingredients gray. """
+            """Dye optional ingredients gray."""
             if ing and ing.optional:
                 s = f'\\textcolor{{gray}}{{- {ing.quantity} {ing.name}}}'
             elif ing:
@@ -54,10 +57,13 @@ class Recipe:
         # `ings_sorted` in half and align both sublists as columns or do some index mangling.
         # In case of odd number of ingredients, `fillvalue` enhances the second shorter iterable
         middle_idx = ceil(len(ings_sorted) / 2)
-        for ing1, ing2 in zip_longest(ings_sorted[:middle_idx],
-                                      ings_sorted[middle_idx:],
-                                      fillvalue=None):
-            ing1_as_field, ing2_as_field = color_ingredient(ing1), color_ingredient(ing2)
+        for ing1, ing2 in zip_longest(
+            ings_sorted[:middle_idx], ings_sorted[middle_idx:], fillvalue=None
+        ):
+            ing1_as_field, ing2_as_field = (
+                color_ingredient(ing1),
+                color_ingredient(ing2),
+            )
             table_row = f'{ing1_as_field} & {ing2_as_field}\\\\\n'
             table_body += table_row
         with open(os.path.join('/tmp', 'ingredients.tex'), 'w') as ingredients_file:
@@ -67,20 +73,25 @@ class Recipe:
 def read_recipe(file_path):
     with open(file_path, 'r') as file:
         recipe_data = yaml.safe_load(file)
-    return Recipe(recipe_data['recipe'][0]['name'], recipe_data['ingredients'], recipe_data['preparation'])
+    return Recipe(
+        recipe_data['recipe'][0]['name'],
+        recipe_data['ingredients'],
+        recipe_data['preparation'],
+    )
 
 
-def yaml2pdf(recipe_yamls: list[str],
-             recipe_dir: Path):
-    outdir = "/tmp/grocery_shopper/"
+def yaml2pdf(recipe_yamls: list[str], recipe_dir: Path):
+    outdir = '/tmp/grocery_shopper/'
     for recipe_file in recipe_yamls:
         recipe: Recipe = read_recipe(os.path.join(recipe_dir, recipe_file))
         recipe.to_latex()
         # Compile recipe before moving to next
-        cp: subprocess.CompletedProcess = subprocess.run([
-            os.path.join('grocery_shopper', 'compile_recipe.sh'),
-            os.path.join('grocery_shopper', 'template.tex'),
-            outdir]
+        cp: subprocess.CompletedProcess = subprocess.run(
+            [
+                os.path.join('grocery_shopper', 'compile_recipe.sh'),
+                os.path.join('grocery_shopper', 'template.tex'),
+                outdir,
+            ],
             # stdout=subprocess.DEVNULL,
             # stderr=subprocess.DEVNULL
         )
@@ -91,6 +102,8 @@ def yaml2pdf(recipe_yamls: list[str],
             if not os.path.isdir(pdf_dir):
                 os.makedirs(pdf_dir, exist_ok=True)
             basename = Path(recipe_file).stem
-            #
-            shutil.move(os.path.join(outdir, 'template.pdf'),
-                        os.path.join(pdf_dir, f'{basename}.pdf'))
+
+            shutil.move(
+                os.path.join(outdir, 'template.pdf'),
+                os.path.join(pdf_dir, f'{basename}.pdf'),
+            )
