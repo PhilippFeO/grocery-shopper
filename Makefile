@@ -49,8 +49,3 @@ test:
 # Verbose tests, ie. with normal output
 vtest:
 	@cd $(git_root_dir) && python3 -m pytest -rA -s tests/
-
-# ─── pdf ──────────
-pdf:
-	grocery_shopper --pdf ./recipes/Testgericht.yaml
-	okular ./recipes/pdf/Testgericht.pdf
