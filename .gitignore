@@ -18,3 +18,4 @@ grocery_shopper.egg-info/
 dist/
 .venv/
 .archive/
+*.tar*
