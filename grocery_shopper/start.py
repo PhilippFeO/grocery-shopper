@@ -10,7 +10,7 @@ from grocery_shopper import main, yaml2pdf
 from grocery_shopper.recipe import Recipe
 from grocery_shopper.select_recipes import select_recipes
 from grocery_shopper.setup_dirs import setup_dirs
-from grocery_shopper.vars import FIXED_MEALS, RECIPE_DIR, defaults_file, directories
+from grocery_shopper.vars import FIXED_MEALS, RECIPE_DIR, defaults_file
 
 logging.basicConfig(
     level=logging.WARNING,
@@ -20,12 +20,12 @@ logging.basicConfig(
 
 
 def start():
-    grocery_shopper_dir = os.path.dirname(__file__)
-    defaults_file_path = f'{grocery_shopper_dir}/{defaults_file}'
+    grocery_shopper_dir = Path(__file__).parent
+    defaults_file_path: Path = Path(f'{grocery_shopper_dir}/{defaults_file}')
     config = configparser.ConfigParser()
     try:
         # According to Doc: Use read_file() when file is expected to exists
-        with open(defaults_file_path) as config_file:
+        with defaults_file_path.open('r') as config_file:
             config.read_file(config_file)
     except FileNotFoundError:
         config['general'] = {}
