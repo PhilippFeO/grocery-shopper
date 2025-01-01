@@ -7,6 +7,7 @@ from pathlib import Path
 from random import choice
 
 from grocery_shopper import main, yaml2pdf
+from grocery_shopper.recipe import Recipe
 from grocery_shopper.select_recipes import select_recipes
 from grocery_shopper.setup_dirs import setup_dirs
 from grocery_shopper.vars import FIXED_MEALS, RECIPE_DIR, defaults_file, directories
@@ -72,30 +73,46 @@ def start():
             config.write(f)
 
     _ = setup_dirs(config, defaults_file_path)
+    randomly_selected_recipes: list[Recipe] = []
     # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024>
     #   ...without type checker complains...
     # TODO: Allow user to define fixed meals <24-08-2024>
     if any(fixed_meal.is_file() for fixed_meal in FIXED_MEALS):
-        recipes = [
+        pre_selected_recipe_yamls: list[Path] = [
             choice(FIXED_MEALS),  # noqa: S311
         ]
     else:
-        recipes = []
+        pre_selected_recipe_yamls = []
     if args.pdf is not None:
         yaml2pdf.yaml2pdf(args.pdf, RECIPE_DIR)
+        sys.exit(0)
     if args.num_recipes is not None:
         if args.take is not None and args.num_recipes > 0:
-            recipes += [RECIPE_DIR / Path(recipe_file) for recipe_file in args.take]
-            recipes += select_recipes(args.num_recipes, RECIPE_DIR, recipes)
+            pre_selected_recipe_yamls += [
+                RECIPE_DIR / Path(recipe_file) for recipe_file in args.take
+            ]
+            randomly_selected_recipes = select_recipes(
+                args.num_recipes,
+                RECIPE_DIR,
+                pre_selected_recipe_yamls,
+            )
         elif args.num_recipes > 0:
-            recipes += list(select_recipes(args.num_recipes, RECIPE_DIR, recipes))
+            randomly_selected_recipes = select_recipes(
+                args.num_recipes,
+                RECIPE_DIR,
+                pre_selected_recipe_yamls,
+            )
     elif args.take is not None:
-        recipes += [RECIPE_DIR / recipe_file for recipe_file in args.take]
+        pre_selected_recipe_yamls += [
+            RECIPE_DIR / recipe_file for recipe_file in args.take
+        ]
 
-    # To prevent execution if no meal was selected, fi. by providing '--pdf'
+    recipes: list[Recipe] = randomly_selected_recipes + [
+        Recipe(yaml_file) for yaml_file in pre_selected_recipe_yamls
+    ]
+
     # recipes always contains the FIXED_MEALS (if they are any)
-    if len(recipes) > len(FIXED_MEALS):
-        main.main(recipes, directories, config)
+    main.main(recipes, directories, config)
 
 
 if __name__ == '__main__':
