@@ -60,12 +60,17 @@ class Recipe:
         yaml_data = yaml.safe_load(recipe_yaml.read_text())
 
         self.name = yaml_data['recipe'][0]['name']
+
+        # If no 'ingredients' key, then `self.ingredients = ()`
         self.ingredients = tuple(
-            Ingredient(**ingredient) for ingredient in yaml_data['ingredients']
+            Ingredient(**ingredient)
+            for ingredient in yaml_data.setdefault('ingredients', [])
         )
+
+        # If no 'preparation' key, then `self.preparation = ()`
         self.preparation = tuple(
             PreparationStep(idx + 1, desc)
-            for idx, desc in enumerate(yaml_data['preparation'])
+            for idx, desc in enumerate(yaml_data.setdefault('preparation', []))
         )
 
     def __str__(self):
