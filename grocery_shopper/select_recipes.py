@@ -16,7 +16,8 @@ def select_recipes(num_recipes, recipe_dir, recipes: list[Path]) -> list[Path]:
     """
     # Check if the directory exists
     if not Path(recipe_dir).is_dir():
-        logging.error(f"Directory '{recipe_dir}' not found.")
+        msg = f"Directory '{recipe_dir}' not found."
+        logging.error(msg)
         sys.exit(1)
 
     # Check if there are files in the directory
@@ -29,13 +30,13 @@ def select_recipes(num_recipes, recipe_dir, recipes: list[Path]) -> list[Path]:
     ]
     num_files = len(yaml_files)
     if num_files == 0:
-        logging.error(f"No yaml-files found in directory '{recipe_dir}'. Just add one.")
+        msg = f"No yaml-files found in directory '{recipe_dir}'. Just add one."
+        logging.error(msg)
         sys.exit(1)
 
     if num_recipes < 1 or num_files < num_recipes:
-        logging.error(
-            f'<num_recipes> must be within 1 and {num_files}, but was {num_recipes}.'
-        )
+        msg = f'<num_recipes> must be within 1 and {num_files}, but was {num_recipes}.'
+        logging.error(msg)
         sys.exit(1)
 
     # Generate an array of random indices within the range of the number of files
