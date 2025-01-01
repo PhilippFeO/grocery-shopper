@@ -2,8 +2,6 @@ __pycache__
 shopping_list.txt
 todo.md
 *.csv
-# 'Selection' is a symlink
-Selection
 hooks/
 Rezepte.md
 # Ignore files, directories and links
@@ -19,3 +17,6 @@ dist/
 .venv/
 .archive/
 *.tar*
+# Symlinks
+Selection
+Rezepte PDF
