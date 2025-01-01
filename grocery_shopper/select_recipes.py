@@ -5,10 +5,15 @@ import random
 import sys
 from pathlib import Path
 
+from grocery_shopper.recipe import Recipe
 from grocery_shopper.vars import FIXED_MEALS
 
 
-def select_recipes(num_recipes, recipe_dir, recipes: list[Path]) -> list[Path]:
+def select_recipes(
+    num_recipes: int,
+    recipe_dir: Path,
+    pre_selected_recipe_yamls: list[Path],
+) -> list[Recipe]:
     """Randomly selects submitted number of recipes.
 
     :param int num_recipes: Number of recipes
@@ -20,37 +25,39 @@ def select_recipes(num_recipes, recipe_dir, recipes: list[Path]) -> list[Path]:
         logging.error(msg)
         sys.exit(1)
 
-    # Check if there are files in the directory
-    yaml_files = glob.glob(os.path.join(recipe_dir, '*.yaml'))
-    # Removed 'FIXED_MEALS' to avoid one fixed meal twice
-    yaml_files = [
-        yaml_file
-        for yaml_file in yaml_files
-        if Path(yaml_file).name not in [fixed_meal.name for fixed_meal in FIXED_MEALS]
+    # Collect all yaml files
+    yaml_files_glob: list[str] = glob.glob(os.path.join(recipe_dir, '*.yaml'))  # noqa: PTH118
+    # Remove 'FIXED_MEALS' to avoid one fixed meal twice
+    yaml_files: list[Path] = [
+        yf
+        for yaml_file in yaml_files_glob
+        if (yf := Path(yaml_file)).name not in [fm.name for fm in FIXED_MEALS]
     ]
+    # Check if yaml files were found
     num_files = len(yaml_files)
-    if num_files == 0:
-        msg = f"No yaml-files found in directory '{recipe_dir}'. Just add one."
-        logging.error(msg)
-        sys.exit(1)
+    assert (
+        num_files != 0
+    ), f"No yaml-files found in directory '{recipe_dir}'. Just add some."
 
-    if num_recipes < 1 or num_files < num_recipes:
-        msg = f'<num_recipes> must be within 1 and {num_files}, but was {num_recipes}.'
-        logging.error(msg)
-        sys.exit(1)
+    assert (
+        num_recipes < 1 or num_files < num_recipes
+    ), f'<num_recipes> must be within 1 and {num_files}, but was {num_recipes}.'
 
-    # Generate an array of random indices within the range of the number of files
-    recipe_indices = random.sample(range(num_files), num_recipes)
-    selection = [Path(yaml_files[i]) for i in recipe_indices]
+    recipes: list[Recipe] = [Recipe(recipe) for recipe in pre_selected_recipe_yamls]
 
     while True:
+        # Generate an array of random indices within the range of the number of files
+        recipe_indices = random.sample(range(num_files), num_recipes)
+        # Turn every selected yaml file into a Recipe instance
+        selection: list[Recipe] = [Recipe(yaml_files[i]) for i in recipe_indices]
+        selection += recipes
+
         print('The following recipes were chosen:')
-        for idx, recipe_path in enumerate(recipes + selection):
-            recipe_name = Path(recipe_path).stem.replace('_', ' ')
-            print(f'\t{idx + 1}. {recipe_name}')
+        for idx, recipe in enumerate(selection):
+            print(f'\t{idx + 1}. {recipe.name}')
         print(
             'Proceed: yes/y\n',
-            f'Reselect: {"/".join(str(i) for i in range(num_recipes+1))} (0 = all)',
+            f'Reselect: {"/".join(str(i) for i in range(1, num_recipes+1))} (0 = all)',
             sep='',
         )
 
@@ -63,8 +70,7 @@ def select_recipes(num_recipes, recipe_dir, recipes: list[Path]) -> list[Path]:
         if user_input in {'yes', 'y'}:
             break
         if user_input in {'0', 'all'}:
-            recipe_indices = random.sample(range(num_files), num_recipes)
-            selection = [Path(yaml_files[i]) for i in recipe_indices]
+            continue
         # User inserted a valid number
         else:
             # Select new recipe until a different one was chosen
@@ -74,7 +80,7 @@ def select_recipes(num_recipes, recipe_dir, recipes: list[Path]) -> list[Path]:
                 new_recipe_index := random.sample(range(num_files), 1)[0]
             ):
                 continue
-            selection[user_input] = Path(yaml_files[new_recipe_index])
+            selection[user_input] = Recipe(yaml_files[new_recipe_index])
         print()
 
     return selection
