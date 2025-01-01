@@ -84,7 +84,7 @@ def start():
     else:
         pre_selected_recipe_yamls = []
     if args.pdf is not None:
-        yaml2pdf.yaml2pdf(args.pdf, RECIPE_DIR)
+        yaml2pdf.yaml2pdf(args.pdf)
         sys.exit(0)
     if args.num_recipes is not None:
         if args.take is not None and args.num_recipes > 0:

@@ -1,55 +1,40 @@
 import logging
-import os
 import shutil
 import subprocess
 from itertools import zip_longest
 from math import ceil
 from pathlib import Path
 
-import yaml
+from grocery_shopper.recipe import Ingredient, Recipe
+from grocery_shopper.vars import RECIPE_DIR
 
-from grocery_shopper.ingredient import Ingredient
 
+class RecipeYaml2Pdf(Recipe):
+    def __init__(self, recipe_yaml):
+        super().__init__(recipe_yaml)
 
-class Recipe:
-    def __init__(self, recipe_name, ingredients, preparation):
-        self.recipe_name = recipe_name
-        self.ingredients: list[Ingredient] = [
-            Ingredient(**ingredient) for ingredient in ingredients
-        ]
-        self.preparation: list[str] = [
-            step.replace('„', '"`').replace('“', '"\'').replace('&', '\\&')
-            for step in preparation
-        ]
+    @staticmethod
+    def color_ingredient(ing: Ingredient | None) -> str:
+        """Dye optional ingredients gray."""
+        if ing is not None and ing.optional:
+            s = f'\\textcolor{{gray}}{{- {ing.quantity} {ing.name}}}'
+        elif ing:
+            s = f'- {ing.quantity} {ing.name}'
+        else:
+            s = ''
+        return s
 
     def to_latex(self):
         # TODO: Write strings to pipe, read form pipe in latex file <06-02-2024>
         # Recipe title
-        with open(os.path.join('/tmp', 'title.tex'), 'w') as recipe_name_file:
-            recipe_name_file.write(self.recipe_name)
+        Path('/tmp', 'title.tex').write_text(self.name)  # noqa: S108
         # Preparation
-        with open(os.path.join('/tmp', 'preparation.tex'), 'w') as preparation_file:
-            # Each step starts with '\d{1,2}.\s', ie 3-4 chars
-            # TODO: Adjust slice according to above comment <13-02-2024>
-            #   Idea: 'preparation' object containing number and instruction separately
-            # Works because Latex collapses multiple spaces (after `\item`) into one
-            preparation_file.writelines(
-                (f'\\item {step[3:]}\n' for step in self.preparation)
-            )
+        Path('/tmp', 'preparation.tex').write_text(  # noqa: S108
+            ''.join(f'\\item {step.step_desc_latex}\n' for step in self.preparation),
+        )
 
         # Ingredients
         table_body = ''
-
-        # Make optional ingredients gray
-        def color_ingredient(ing: Ingredient | None) -> str:
-            """Dye optional ingredients gray."""
-            if ing and ing.optional:
-                s = f'\\textcolor{{gray}}{{- {ing.quantity} {ing.name}}}'
-            elif ing:
-                s = f'- {ing.quantity} {ing.name}'
-            else:
-                s = ''
-            return s
 
         # `sorted()` sets False before True
         ings_sorted = sorted(self.ingredients, key=lambda ing: ing.optional)
@@ -58,52 +43,47 @@ class Recipe:
         # In case of odd number of ingredients, `fillvalue` enhances the second shorter iterable
         middle_idx = ceil(len(ings_sorted) / 2)
         for ing1, ing2 in zip_longest(
-            ings_sorted[:middle_idx], ings_sorted[middle_idx:], fillvalue=None
+            ings_sorted[:middle_idx],
+            ings_sorted[middle_idx:],
+            fillvalue=None,
         ):
             ing1_as_field, ing2_as_field = (
-                color_ingredient(ing1),
-                color_ingredient(ing2),
+                self.color_ingredient(ing1),
+                self.color_ingredient(ing2),
             )
             table_row = f'{ing1_as_field} & {ing2_as_field}\\\\\n'
             table_body += table_row
-        with open(os.path.join('/tmp', 'ingredients.tex'), 'w') as ingredients_file:
-            ingredients_file.writelines(table_body)
+        Path('/tmp', 'ingredients.tex').write_text(table_body)  # noqa: S108
 
 
-def read_recipe(file_path):
-    with open(file_path, 'r') as file:
-        recipe_data = yaml.safe_load(file)
-    return Recipe(
-        recipe_data['recipe'][0]['name'],
-        recipe_data['ingredients'],
-        recipe_data['preparation'],
-    )
-
-
-def yaml2pdf(recipe_yamls: list[str], recipe_dir: Path):
-    outdir = '/tmp/grocery_shopper/'
+def yaml2pdf(recipe_yamls: list[str]):
+    outdir = Path('/tmp/grocery_shopper/')  # noqa: S108
     for recipe_file in recipe_yamls:
-        recipe: Recipe = read_recipe(os.path.join(recipe_dir, recipe_file))
+        recipe: RecipeYaml2Pdf = RecipeYaml2Pdf(Path(RECIPE_DIR, recipe_file))
         recipe.to_latex()
         # Compile recipe before moving to next
         cp: subprocess.CompletedProcess = subprocess.run(
             [
-                os.path.join('grocery_shopper', 'compile_recipe.sh'),
-                os.path.join('grocery_shopper', 'template.tex'),
+                Path('grocery_shopper', 'compile_recipe.sh'),
+                Path('grocery_shopper', 'template.tex'),
                 outdir,
             ],
             # stdout=subprocess.DEVNULL,
             # stderr=subprocess.DEVNULL
         )
         if cp.returncode != 0:
-            logging.error(f'Compilation of "{recipe_file}" failed.')
+            msg = f'Compilation of "{recipe_file}" failed.'
+            logging.error(msg)
         else:
-            pdf_dir = os.path.join(recipe_dir, 'pdf')
-            if not os.path.isdir(pdf_dir):
-                os.makedirs(pdf_dir, exist_ok=True)
+            pdf_dir = Path(RECIPE_DIR, 'pdf')
+            if not pdf_dir.is_dir():
+                pdf_dir.mkdir(
+                    parents=True,
+                    exist_ok=True,
+                )
             basename = Path(recipe_file).stem
 
             shutil.move(
-                os.path.join(outdir, 'template.pdf'),
-                os.path.join(pdf_dir, f'{basename}.pdf'),
+                Path(outdir, 'template.pdf'),
+                Path(pdf_dir, f'{basename}.pdf'),
             )

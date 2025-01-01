@@ -45,6 +45,7 @@ class PreparationStep:
     def __init__(self, step_idx: int, step_desc: str):
         self.step_idx = step_idx
         self.step_desc = step_desc
+        self.step_desc_latex = step_desc.replace('&', '\&')
 
     def __repr__(self):
         return f'{self.step_idx}. {self.step_desc}'
@@ -55,6 +56,7 @@ class Recipe:
         assert (
             recipe_yaml.suffix == '.yaml'
         ), f'No yaml file was provided: {recipe_yaml}'
+
         self.path: Path = recipe_yaml
 
         # Parse the YAML data
@@ -90,4 +92,4 @@ if __name__ == '__main__':
         '/home/philipp/programmieren/grocery-shopper/recipes/Spätzle.yaml',
     )
     recipe = Recipe(recipe_file)
-    print(recipe)  # noqa: T201
+    print(recipe)
