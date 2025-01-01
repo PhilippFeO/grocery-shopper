@@ -18,7 +18,7 @@ def filter_names(
     return [ing for ing in ingredients if ing.name in names]
 
 
-def test_parse_edited_list(all_ingredients):
+def test_retrieve_required_ingredients(all_ingredients):
     # from grocery_shopper.make_table import make_table
     # table: str = make_table(all_ingredients)
     # print(table)

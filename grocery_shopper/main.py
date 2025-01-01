@@ -8,9 +8,9 @@ from typing import TYPE_CHECKING
 from grocery_shopper.archive_contents import archive_contents
 from grocery_shopper.handle_ing_miss_url import handle_ing_miss_cu
 from grocery_shopper.make_table import make_table
-from grocery_shopper.parse_edited_list import retrieve_required_ingredients
 from grocery_shopper.read_csv import read_csv
 from grocery_shopper.recipe import Recipe
+from grocery_shopper.retrieve_required_ingredients import retrieve_required_ingredients
 from grocery_shopper.vars import MISC_DIR, RESOURCE_DIR
 
 if TYPE_CHECKING:
