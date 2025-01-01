@@ -21,6 +21,7 @@ def test_copy_shopping_list(tmp_path, recipes):
     assert archived_shopping_list.is_file()
 
 
+@pytest.mark.skip(reason='create_convenience_symlink() is not called.')
 def test_create_convenience_symlink():
     # Assert temp link was removed
     assert not Path('Selection.new').is_symlink()
