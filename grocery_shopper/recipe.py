@@ -23,11 +23,21 @@ class PreparationStep:
 
 
 class Recipe:
-    def __init__(self, name, ingredients, preparation):
-        self.name = name
-        self.ingredients = tuple(Ingredient(**ingredient) for ingredient in ingredients)
+    def __init__(self, recipe_yaml: Path):
+        assert (
+            recipe_yaml.suffix == '.yaml'
+        ), f'No yaml file was provided: {recipe_yaml}'
+
+        # Parse the YAML data
+        yaml_data = yaml.safe_load(recipe_yaml.read_text())
+
+        self.name = yaml_data['recipe']['name']
+        self.ingredients = tuple(
+            Ingredient(**ingredient) for ingredient in yaml_data['ingredients']
+        )
         self.preparation = tuple(
-            PreparationStep(idx + 1, desc) for idx, desc in enumerate(preparation)
+            PreparationStep(idx + 1, desc)
+            for idx, desc in enumerate(yaml_data['preparation'])
         )
 
     def __str__(self):
@@ -38,16 +48,7 @@ class Recipe:
 
 
 if __name__ == '__main__':
-    yaml_file = Path('./recipes/Spätzle.yaml')
-    # Parse the YAML data
-    data = yaml.safe_load(yaml_file.read_text())
+    recipe_file = Path('./recipes/Spätzle.yaml')
 
     # Create Recipe instances
-    recipes = [
-        Recipe(recipe['name'], data['ingredients'], data['preparation'])
-        for recipe in data['recipe']
-    ]
-
-    # Print the recipes
-    for recipe in recipes:
-        print(recipe)
+    print(Recipe(recipe_file))
