@@ -11,9 +11,11 @@ from grocery_shopper.select_recipes import select_recipes
 from grocery_shopper.setup_dirs import setup_dirs
 from grocery_shopper.vars import FIXED_MEALS, RECIPE_DIR, defaults_file, directories
 
-logging.basicConfig(level=logging.WARNING,
-                    format='[%(levelname)s: %(asctime)s] %(message)s',
-                    datefmt=' %H:%M:%S')
+logging.basicConfig(
+    level=logging.WARNING,
+    format='[%(levelname)s: %(asctime)s] %(message)s',
+    datefmt=' %H:%M:%S',
+)
 
 
 def start():
@@ -28,28 +30,27 @@ def start():
         config['general'] = {}
 
     p = argparse.ArgumentParser(__file__)
-    p.add_argument('-n', '--num-recipes',
-                   help='Number of recipes',
-                   type=int)
-    p.add_argument('--dir',
-                   help='Top level directory. Here will all files and directories be saved.',
-                   type=str)
-    p.add_argument('--firefox-profile',
-                   help='Path to the firefox profile.',
-                   type=str)
+    p.add_argument('-n', '--num-recipes', help='Number of recipes', type=int)
+    p.add_argument(
+        '--dir',
+        help='Top level directory. Here will all files and directories be saved.',
+        type=str,
+    )
+    p.add_argument('--firefox-profile', help='Path to the firefox profile.', type=str)
     p.add_argument(
         '--pdf',
         metavar='recipe.yaml',
         help='Generate pdfs from yaml files using LaTeX.',
         nargs='+',
-        type=str
+        type=str,
     )
     p.add_argument(
         '--take',
         metavar='recipe.yaml',
         help='Take the following ingredients and do no random selection.',
         nargs='+',
-        type=str)
+        type=str,
+    )
     args = p.parse_args()
 
     # Check config for firefox profile
@@ -58,10 +59,14 @@ def start():
         try:
             config['general'][key_firefox_profile]
         except (configparser.NoSectionError, configparser.NoOptionError, KeyError):
-            logging.error('No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it\'s your first run.')
+            logging.error(
+                "No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it's your first run."
+            )
             sys.exit(1)
     else:
-        config['general'][key_firefox_profile] = os.path.expanduser(args.firefox_profile)
+        config['general'][key_firefox_profile] = os.path.expanduser(
+            args.firefox_profile,
+        )
         # Write default values
         with open(defaults_file_path, 'w') as f:
             config.write(f)
@@ -80,13 +85,12 @@ def start():
         yaml2pdf.yaml2pdf(args.pdf, RECIPE_DIR)
     if args.num_recipes:
         if args.take and args.num_recipes > 0:
-            recipes += [RECIPE_DIR/Path(recipe_file)
-                        for recipe_file in args.take]
+            recipes += [RECIPE_DIR / Path(recipe_file) for recipe_file in args.take]
             recipes += select_recipes(args.num_recipes, RECIPE_DIR, recipes)
         elif args.num_recipes > 0:
             recipes += list(select_recipes(args.num_recipes, RECIPE_DIR, recipes))
     elif args.take:
-        recipes += [RECIPE_DIR/recipe_file for recipe_file in args.take]
+        recipes += [RECIPE_DIR / recipe_file for recipe_file in args.take]
 
     # To prevent execution if no meal was selected, fi. by providing '--pdf'
     # recipes always contains the FIXED_MEALS (if they are any)
@@ -94,5 +98,5 @@ def start():
         main.main(recipes, directories, config)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     start()
