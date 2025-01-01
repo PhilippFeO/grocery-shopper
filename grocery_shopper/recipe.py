@@ -61,17 +61,17 @@ class Recipe:
 
         self.name = yaml_data['recipe'][0]['name']
 
-        # If no 'ingredients' key, then `self.ingredients = ()`
-        self.ingredients = tuple(
+        # If no 'ingredients' key, then `self.ingredients = []`
+        self.ingredients = [
             Ingredient(**ingredient)
             for ingredient in yaml_data.setdefault('ingredients', [])
-        )
+        ]
 
-        # If no 'preparation' key, then `self.preparation = ()`
-        self.preparation = tuple(
+        # If no 'preparation' key, then `self.preparation = []`
+        self.preparation = [
             PreparationStep(idx + 1, desc)
             for idx, desc in enumerate(yaml_data.setdefault('preparation', []))
-        )
+        ]
 
     def __str__(self):
         return f'{self.name}: {len(self.ingredients)} Ingredients, {len(self.preparation)} Steps'
