@@ -81,15 +81,15 @@ def start():
         ]
     else:
         recipes = []
-    if args.pdf:
+    if args.pdf is not None:
         yaml2pdf.yaml2pdf(args.pdf, RECIPE_DIR)
-    if args.num_recipes:
-        if args.take and args.num_recipes > 0:
+    if args.num_recipes is not None:
+        if args.take is not None and args.num_recipes > 0:
             recipes += [RECIPE_DIR / Path(recipe_file) for recipe_file in args.take]
             recipes += select_recipes(args.num_recipes, RECIPE_DIR, recipes)
         elif args.num_recipes > 0:
             recipes += list(select_recipes(args.num_recipes, RECIPE_DIR, recipes))
-    elif args.take:
+    elif args.take is not None:
         recipes += [RECIPE_DIR / recipe_file for recipe_file in args.take]
 
     # To prevent execution if no meal was selected, fi. by providing '--pdf'
