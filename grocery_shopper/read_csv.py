@@ -12,7 +12,7 @@ class CategoryURL(NamedTuple):
 def read_csv(file_path: Path) -> dict[str, CategoryURL]:
     """Read a CSV file and returns a dictionary. First entry (name of ingredient) is key, value is tuple consisting of `category` and `url`."""
     csv_dict = {}
-    csv_reader = csv.reader(file_path.read_text())
+    csv_reader = csv.reader(file_path.read_text().split('\n'))
 
     for row in csv_reader:
         ingredient_str, category, *urls = row
