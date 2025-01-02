@@ -42,7 +42,7 @@ def query_for_url(
             icu_entries.append(f'{ing.name},{ing.category},{",".join(urls)}')
     # Now, all missing `category` and `url` were completed => append to CSV file
     with icu_file.open('a') as f:
-        f.write('\n' + '\n'.join(icu_entries))
+        f.write('\n'.join(icu_entries) + '\n')
 
 
 def handle_ing_miss_cu(

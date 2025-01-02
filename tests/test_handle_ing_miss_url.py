@@ -79,6 +79,6 @@ def test_query_for_url(monkeypatch, tmp_path, ings_missing_cu):
     ing0 = f'{ings_missing_cu[0].name},{cat0},{url0}'
     ing1 = f'{ings_missing_cu[1].name},{cat1},{url1.replace(" ", ",")}'
     ing2 = f'{ings_missing_cu[2].name},{cat2},{url2}'
-    expected_contents = f'{ing0}\n{ing1}\n{ing2}'
+    expected_contents = f'{ing0}\n{ing1}\n{ing2}\n'
 
     assert tmp_icu_file.read_text() == expected_contents
