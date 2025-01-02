@@ -16,7 +16,7 @@ class Ingredient:
     ):
         self.name: str = name
         # may have one of the following form: 2 (pieces), 250g, 1 Block => string necessary
-        self.quantity: str = quantity
+        self.quantity: str = str(quantity)
         self.optional: bool = optional
         self.category = category
         self.url = url
@@ -67,7 +67,7 @@ class Recipe:
 
         # If no 'ingredients' key, then `self.ingredients = []`
         self.ingredients = [
-            Ingredient(**ingredient)
+            Ingredient(**ingredient, meal=self.name)
             for ingredient in yaml_data.setdefault('ingredients', [])
         ]
         self.ingredients.sort(
