@@ -61,12 +61,12 @@ def select_recipes(
         )
 
         # Check for admissible inputs
-        admissible = {'yes', 'y', 'all'} | {str(i) for i in range(num_recipes + 1)}
+        admissible = {'', 'yes', 'y', 'all'} | {str(i) for i in range(num_recipes + 1)}
         while (user_input := input('Input: ').lower()) not in admissible:
             print(f'Invalid input. Please enter one of the following:\n\t{admissible}')
 
         # Asses user input
-        if user_input in {'yes', 'y'}:
+        if user_input in {'', 'yes', 'y'}:
             break
         if user_input in {'0', 'all'}:
             continue
