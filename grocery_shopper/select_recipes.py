@@ -46,13 +46,13 @@ def select_recipes(
         Recipe(recipe) for recipe in pre_selected_recipe_yamls
     ]
 
-    while True:
-        # Generate an array of random indices within the range of the number of files
-        recipe_indices = random.sample(range(num_files), num_recipes)
-        # Turn every selected yaml file into a Recipe instance
-        selection: list[Recipe] = [Recipe(yaml_files[i]) for i in recipe_indices]
-        selection += pre_selected_recipe_names
+    # Generate an array of random indices within the range of the number of files
+    recipe_indices = random.sample(range(num_files), num_recipes)
+    # Turn every selected yaml file into a Recipe instance
+    selection: list[Recipe] = [Recipe(yaml_files[i]) for i in recipe_indices]
+    selection += pre_selected_recipe_names
 
+    while True:
         print('The following recipes were chosen:')
         for idx, recipe in enumerate(selection):
             print(f'\t{idx + 1}. {recipe.name}')
