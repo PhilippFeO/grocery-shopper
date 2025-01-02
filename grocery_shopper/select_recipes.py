@@ -38,9 +38,8 @@ def select_recipes(
     assert (
         num_files != 0
     ), f"No yaml-files found in directory '{recipe_dir}'. Just add some."
-
     assert (
-        num_recipes < 1 or num_files < num_recipes
+        1 <= num_recipes <= num_files
     ), f'<num_recipes> must be within 1 and {num_files}, but was {num_recipes}.'
 
     recipes: list[Recipe] = [Recipe(recipe) for recipe in pre_selected_recipe_yamls]
