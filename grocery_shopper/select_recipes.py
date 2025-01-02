@@ -1,4 +1,5 @@
 import glob
+import itertools
 import logging
 import os
 import random
@@ -7,6 +8,17 @@ from pathlib import Path
 
 from grocery_shopper.recipe import Recipe
 from grocery_shopper.vars import FIXED_MEALS
+
+
+def helper(
+    num_files: int,
+    num_recipes: int,
+    yaml_files: list[Path],
+) -> tuple[list[Recipe], list[int]]:
+    # Generate an array of random indices within the range of the number of files
+    recipe_indices = random.sample(range(num_files), num_recipes)
+    # Turn every selected yaml file into a Recipe instance
+    return [Recipe(yaml_files[i]) for i in recipe_indices], recipe_indices
 
 
 def select_recipes(
@@ -46,15 +58,20 @@ def select_recipes(
         Recipe(recipe) for recipe in pre_selected_recipe_yamls
     ]
 
-    # Generate an array of random indices within the range of the number of files
-    recipe_indices = random.sample(range(num_files), num_recipes)
-    # Turn every selected yaml file into a Recipe instance
-    selection: list[Recipe] = [Recipe(yaml_files[i]) for i in recipe_indices]
-    selection += pre_selected_recipe_names
+    selection, recipe_indices = helper(
+        num_files,
+        num_recipes,
+        yaml_files,
+    )
 
     while True:
         print('The following recipes were chosen:')
-        for idx, recipe in enumerate(selection):
+        for idx, recipe in enumerate(
+            itertools.chain(
+                selection,
+                pre_selected_recipe_names,
+            ),
+        ):
             print(f'\t{idx + 1}. {recipe.name}')
         print(
             'Proceed: yes/y\n',
@@ -71,8 +88,13 @@ def select_recipes(
         if user_input in {'', 'yes', 'y'}:
             break
         if user_input in {'0', 'all'}:
+            selection, recipe_indices = helper(
+                num_files,
+                num_recipes,
+                yaml_files,
+            )
             continue
-        # de facto 'else'
+        # de facto 'else', ie. a number
         # User inserted a valid number
         # Select new recipe until a different one was chosen
         # TODO: Remove potential of running indefinetly <17-03-2024>
