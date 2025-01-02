@@ -63,6 +63,9 @@ def main(
         all_ingredients += recipe.ingredients
     shopping_list_str.append(make_table(all_ingredients) + '\n' * 2)
 
+    for misc_recipe in misc_recipes:
+        all_ingredients.extend(misc_recipe.ingredients)
+
     # I want to add a destinct heading for each file in misc_dir misc.
     # Iterating over `sys.argv[1:] + misc_files` would only be possibe with various if-statements
     # because the CLI provided files don't get a "filename" heading like `misc_files` do.
