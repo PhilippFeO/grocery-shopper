@@ -42,14 +42,16 @@ def select_recipes(
         1 <= num_recipes <= num_files
     ), f'<num_recipes> must be within 1 and {num_files}, but was {num_recipes}.'
 
-    recipes: list[Recipe] = [Recipe(recipe) for recipe in pre_selected_recipe_yamls]
+    pre_selected_recipe_names: list[Recipe] = [
+        Recipe(recipe) for recipe in pre_selected_recipe_yamls
+    ]
 
     while True:
         # Generate an array of random indices within the range of the number of files
         recipe_indices = random.sample(range(num_files), num_recipes)
         # Turn every selected yaml file into a Recipe instance
         selection: list[Recipe] = [Recipe(yaml_files[i]) for i in recipe_indices]
-        selection += recipes
+        selection += pre_selected_recipe_names
 
         print('The following recipes were chosen:')
         for idx, recipe in enumerate(selection):
@@ -70,16 +72,16 @@ def select_recipes(
             break
         if user_input in {'0', 'all'}:
             continue
+        # de facto 'else'
         # User inserted a valid number
-        else:
-            # Select new recipe until a different one was chosen
-            # TODO: Remove potential of running indefinetly <17-03-2024>
-            user_input = int(user_input) - 1
-            while recipe_indices[user_input] == (
-                new_recipe_index := random.sample(range(num_files), 1)[0]
-            ):
-                continue
-            selection[user_input] = Recipe(yaml_files[new_recipe_index])
+        # Select new recipe until a different one was chosen
+        # TODO: Remove potential of running indefinetly <17-03-2024>
+        user_input = int(user_input) - 1
+        while recipe_indices[user_input] == (
+            new_recipe_index := random.sample(range(num_files), 1)[0]
+        ):
+            continue
+        selection[user_input] = Recipe(yaml_files[new_recipe_index])
         print()
 
     return selection

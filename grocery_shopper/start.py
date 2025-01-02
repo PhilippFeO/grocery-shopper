@@ -60,20 +60,20 @@ def start():
         try:
             config['general'][key_firefox_profile]
         except (configparser.NoSectionError, configparser.NoOptionError, KeyError):
-            logging.error(
-                "No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it's your first run."
+            logging.exception(
+                "No default firefox profile path set. Please use\n\t--firefox_profile PATH\nif it's your first run.",
             )
             sys.exit(1)
     else:
-        config['general'][key_firefox_profile] = os.path.expanduser(
-            args.firefox_profile,
+        config['general'][key_firefox_profile] = str(
+            Path.expanduser(args.firefox_profile),
         )
         # Write default values
-        with open(defaults_file_path, 'w') as f:
+        with defaults_file_path.open('w') as f:
             config.write(f)
 
     _ = setup_dirs(config, defaults_file_path)
-    randomly_selected_recipes: list[Recipe] = []
+    recipes: list[Recipe] = []
     # TODO: Remove unnecessary tuple(select_recipes(…)) casts of <12-04-2024>
     #   ...without type checker complains...
     # TODO: Allow user to define fixed meals <24-08-2024>
@@ -91,13 +91,13 @@ def start():
             pre_selected_recipe_yamls += [
                 RECIPE_DIR / Path(recipe_file) for recipe_file in args.take
             ]
-            randomly_selected_recipes = select_recipes(
+            recipes = select_recipes(
                 args.num_recipes,
                 RECIPE_DIR,
                 pre_selected_recipe_yamls,
             )
         elif args.num_recipes > 0:
-            randomly_selected_recipes = select_recipes(
+            recipes = select_recipes(
                 args.num_recipes,
                 RECIPE_DIR,
                 pre_selected_recipe_yamls,
@@ -106,10 +106,7 @@ def start():
         pre_selected_recipe_yamls += [
             RECIPE_DIR / recipe_file for recipe_file in args.take
         ]
-
-    recipes: list[Recipe] = randomly_selected_recipes + [
-        Recipe(yaml_file) for yaml_file in pre_selected_recipe_yamls
-    ]
+        recipes = [Recipe(yaml_file) for yaml_file in pre_selected_recipe_yamls]
 
     # recipes always contains the FIXED_MEALS (if they are any)
     main.main(recipes, config)
